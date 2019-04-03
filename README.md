@@ -2,10 +2,10 @@
 
 Add configuration.xml file and create directories for every flavor for building.
 
-- configuration.xml -> /app/src/prodContentFull/configuration.xml
-- configuration.xml -> /app/src/prodContentPart/configuration.xml
-- configuration.xml -> /app/src/stageContentFull/configuration.xml
-- configuration.xml -> /app/src/stageContentPart/configuration.xml
+- configuration.xml -> /app/src/prodContentFull/res/values/configuration.xml
+- configuration.xml -> /app/src/prodContentPart/res/values/configuration.xml
+- configuration.xml -> /app/src/stageContentFull/res/values/configuration.xml
+- configuration.xml -> /app/src/stageContentPart/res/values/configuration.xml
 
 Example of configuration.xml file
 
