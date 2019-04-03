@@ -30,10 +30,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", "\"https://staging-myosotis.storyclm.com\""
         }
         debug {
-            buildConfigField "String", "BASE_URL", "\"https://staging-myosotis.storyclm.com\""
+
         }
     }
 
