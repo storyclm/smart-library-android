@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="colorPrimary_story">#45bcff</color>
+    <color name="colorPrimaryDark_story">#008ccc</color>
+    <color name="colorAccent_story">#528cfe</color>
+    <color name="white_story">#ffffff</color>
+    <color name="status_color_story">#73ffffff</color>
+    <color name="white_gray_50_story">#80e0e1e3</color>
+    <color name="chat_bg_story">#ebeff2</color>
+    <color name="transparent_story">#00ffffff</color>
+    <color name="red_story">#e63131</color>
+    <color name="red_50_story">#80e63131</color>
+    <color name="yellow_story">#facf55</color>
+    <color name="yellow_50_story">#80facf55</color>
+    <color name="orange_story">#facf55</color>
+    <color name="blue_story">#346afe</color>
+    <color name="divider_title_story">#b34a4a4a</color>
+    <color name="bg_gradient_start_story">@color/blue_story</color>
+    <color name="bg_gradient_end_story">#64a3ff</color>
+    <color name="toolbar_50_story">#802196f3</color>
+    <color name="took_less_story">#ef5350</color>
+    <color name="took_more_story">#66bb6a</color>
+
+    <color name="text_button_story">#3fd2fe</color>
+    <color name="tab_indicator_story">#3fd2fe</color>
+    <color name="default_todayCircleColor_story">@color/colorPrimary_story</color>
+    <color name="default_eventCircleColor_story">@color/colorAccent_story</color>
+    <color name="default_backgroundColor_story">#fffafafa</color>
+    <color name="underline_dark_story">@color/white_gray_story</color>
+    <color name="underline_light_story">#b8d1ff</color>
+
+    <color name="notification_story">@color/toolbar_color_story</color>
+
+    <color name="label_black_story">#45464b</color>
+    <color name="label_blue_story">#b8d1ff</color>
+    <color name="label_dark_blue_story">#346afe</color>
+    <color name="label_dark_grey_story">#8b000000</color>
+    <color name="label_grey_story">#c3c3c3</color>
+    <color name="label_dark_green_story">#006e00</color>
+
+    <color name="background_blue_story">#3c70fd</color>
+    <color name="background_grey_story">#FAFAFA</color>
+
+    <color name="divider_profile_story">@color/white_gray_story</color>
+
+    <color name="pin_code_button_story">#FF1A78C1</color>
+    <color name="registration_progress_tint_story">#FFFF</color>
+    <color name="fullscreen_progress_bar_story">#99FFFFFF</color>
+    <color name="shadow_color_story">#aa000000</color>
+    <color name="shadow_color_clm_story">#aa6bddc3</color>
+    <color name="green_fab_story">#7ad71c</color>
+    <color name="blue_fab_story">#3fd2fe</color>
+    <color name="fab_cyan_story">#6bddc3</color>
+    <color name="fab_dark_blue_story">#346afe</color>
+    <color name="dark_grey_story">#4a4a4a</color>
+    <color name="fab_red_story">#d6293e</color>
+    <color name="fab_pink_story">#fd4aad</color>
+    <color name="check_disabled_story">#FF4F4F4F</color>
+    <color name="toolbar_color_story">#2196f3</color>
+    <color name="tab_unselected_story">#747474</color>
+    <color name="unselected_tab_story">#b3ffffff</color>
+    <color name="divider_color_story">#c4c4c4</color>
+    <color name="system_doctor_color_story">#142096f3</color>
+    <color name="transparent_black_story">#14000000</color>
+    <color name="story_btn_story">#6ACAD6</color>
+
+    <color name="white_gray_story">#e0e1e3</color>
+    <color name="background_guide_story">#2196f3</color>
+    <color name="black20_story">#20000000</color>
+
+
+    <color name="white">#ffffff</color>
+    <color name="yellow">#20000000</color>
+    <color name="divider_color">#20000000</color>
+
+    <color name="toolbar_color">#20000000</color>
+    <color name="story_btn">#20000000</color>
+    <color name="underline_dark">#20000000</color>
+    <color name="fab_cyan">#20000000</color>
+    <color name="unselected_tab">#20000000</color>
+    <color name="background_guide">#20000000</color>
+    <color name="divider_title">#20000000</color>
+    <color name="label_black">#20000000</color>
+    <color name="disable_tab_text">#B2FFFFFF</color>
+
+    <color name="media_background">#E60A0A0A</color>
+    <color name="media_item_background">#B2000000</color>
+
+</resources>

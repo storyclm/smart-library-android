@@ -1,0 +1,6 @@
+/build
+
+/src/prodContentFull/res/values/configurations.xml
+/src/prodContentPart/res/values/configurations.xml
+/src/stageContentFull/res/values/configurations.xml
+/src/stageContentPart/res/values/configurations.xml

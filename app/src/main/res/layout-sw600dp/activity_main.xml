@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/Toolbar"
+                app:contentInsetEnd="@dimen/toolbar_inset"
+                app:contentInsetStart="@dimen/toolbar_inset">
+
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:id="@+id/toolbar_title"
+                        style="@style/ToolbarTitle"
+                        android:layout_marginStart="@dimen/default_padding"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/library"/>
+
+            </FrameLayout>
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary_story"
+                android:visibility="visible"
+                app:tabTextAppearance="@style/MiniCustomTabText"
+                app:tabIndicatorColor="@color/white"
+                app:tabSelectedTextColor="@android:color/white"
+                app:tabTextColor="@color/unselected_tab"
+                app:tabMode="scrollable"
+                app:tabGravity="fill"
+                android:layout_gravity="end"/>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <ru.breffi.smartlibrary.views.NonSwipeableViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar_layout"/>
+
+</RelativeLayout>

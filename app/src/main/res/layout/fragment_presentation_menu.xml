@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+    <TextView
+            android:id="@+id/share_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/share"
+            android:drawableStart="@drawable/ic_share"
+            android:drawablePadding="32dp"
+            android:paddingStart="16dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textColor="#de000000"
+            android:lineSpacingExtra="8sp"
+            android:gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"/>
+
+    <!--<TextView-->
+            <!--android:id="@+id/update_text_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:text="@string/update"-->
+            <!--android:drawableStart="@drawable/ic_update"-->
+            <!--android:drawablePadding="32dp"-->
+            <!--android:textSize="16sp"-->
+            <!--android:paddingStart="18dp"-->
+            <!--android:fontFamily="sans-serif"-->
+            <!--android:textStyle="normal"-->
+            <!--android:textColor="#de000000"-->
+            <!--android:lineSpacingExtra="8sp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:background="?android:attr/selectableItemBackground"/>-->
+
+    <TextView
+            android:id="@+id/delete_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/delete"
+            android:drawableStart="@drawable/ic_delete"
+            android:drawablePadding="36dp"
+            android:textSize="16sp"
+            android:paddingStart="22dp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textColor="#de000000"
+            android:lineSpacingExtra="8sp"
+            android:gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"/>
+</LinearLayout>

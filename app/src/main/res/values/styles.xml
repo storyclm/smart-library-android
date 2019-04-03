@@ -1,0 +1,359 @@
+<resources>
+
+    <style name="TransparentCompat" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary_story</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_story</item>
+        <item name="colorAccent">@color/colorPrimaryDark_story</item>
+        <item name="colorButtonNormal">@color/notification_story</item>
+        <item name="android:textColorSecondary">@color/toolbar_color_story</item>
+        <item name="android:textColorHint">@color/label_blue_story</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/toolbar_color_story</item>
+        <item name="android:actionMenuTextColor">@android:color/white</item>
+
+    </style>
+
+    <style name="Test" parent="AppTheme">
+        <item name="android:textColorSecondary">@color/toolbar_color_story</item>
+    </style>
+
+    <style name="search_ImageButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:paddingLeft">@dimen/default_padding</item>
+        <item name="android:paddingRight">@dimen/default_padding</item>
+    </style>
+
+
+    <style name="MiniCustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/tab_text_size</item>
+    </style>
+
+    <style name="NoActionBar" parent="@android:style/Theme.Holo.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="MyCheckBoxEnabled" parent="Base.Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="colorAccent">@color/toolbar_color_story</item>
+    </style>
+    <style name="MyCheckBoxDisabled" parent="Base.Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="colorAccent">@color/check_disabled_story</item>
+    </style>
+    <style name="Logo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="FAB" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/divider_width</item>
+        <item name="android:layout_marginEnd">@dimen/divider_width</item>
+        <item name="android:background">@null</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="EditTextField">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_big</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingBottom">@dimen/space_width</item>
+        <item name="android:maxLength">30</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+
+    <style name="EditTextLight" parent="EditTextField">
+        <item name="android:textColor">@color/white_story</item>
+        <item name="android:textColorHint">@color/label_blue_story</item>
+        <item name="android:paddingTop">@dimen/drug_report_card_margin</item>
+    </style>
+
+    <style name="PhoneEditTextLight" parent="EditTextLight">
+        <item name="android:text">+7</item>
+        <item name="android:hint">@string/phone</item>
+        <item name="android:maxLength">18</item>
+        <item name="android:inputType">phone</item>
+    </style>
+
+    <style name="SmsEditTextLight" parent="PhoneEditTextLight">
+        <item name="android:text" />
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:digits">0123456789</item>
+    </style>
+
+    <style name="EditTextDark" parent="EditTextField">
+        <item name="android:textColor">@color/label_black_story</item>
+        <item name="android:textColorHint">@color/label_grey_story</item>
+        <item name="android:paddingTop">@dimen/drug_report_card_margin</item>
+    </style>
+
+    <style name="PhoneEditTextDark" parent="EditTextDark">
+        <item name="android:text">+7</item>
+        <item name="android:hint">@string/phone_hint</item>
+        <item name="android:maxLength">18</item>
+        <item name="android:inputType">phone</item>
+    </style>
+
+    <style name="TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/welcome_padding</item>
+        <item name="android:layout_marginRight">@dimen/welcome_padding</item>
+    </style>
+
+    <style name="TextInputLayoutDark" parent="TextInputLayout">
+        <item name="android:layout_marginLeft">@dimen/default_padding</item>
+        <item name="android:layout_marginRight">@dimen/default_padding</item>
+        <item name="android:theme">@style/TextLabelDark</item>
+    </style>
+
+    <style name="TextInputLayoutLight" parent="TextInputLayout">
+        <item name="android:theme">@style/TextLabelLight</item>
+    </style>
+
+    <style name="TextLabelDark" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/label_grey_story</item>
+        <item name="android:textSize">@dimen/text_big</item>
+        <item name="colorAccent">@color/label_grey_story</item>
+        <item name="colorControlNormal">@color/label_grey_story</item>
+        <item name="colorControlActivated">@color/label_grey_story</item>
+    </style>
+
+    <style name="TextLabelDarkSmall" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/label_grey_story</item>
+        <item name="android:textSize">@dimen/time_text_size</item>
+        <item name="colorAccent">@color/label_grey_story</item>
+        <item name="colorControlNormal">@color/label_grey_story</item>
+        <item name="colorControlActivated">@color/label_grey_story</item>
+    </style>
+
+    <style name="TextLabelLight" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/label_blue_story</item>
+        <item name="android:textSize">@dimen/text_big</item>
+        <item name="colorAccent">@color/label_blue_story</item>
+        <item name="colorControlNormal">@color/label_blue_story</item>
+        <item name="colorControlActivated">@color/label_blue_story</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/toolbar_color_story</item>
+    </style>
+
+    <style name="CalendarItem">
+        <item name="android:layout_width">@dimen/progress_margin_top</item>
+        <item name="android:layout_height">@dimen/progress_margin_top</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginLeft">@dimen/space_width</item>
+        <item name="android:layout_marginRight">@dimen/space_width</item>
+        <item name="android:layout_marginTop">@dimen/space_width</item>
+        <item name="android:layout_marginBottom">@dimen/space_width</item>
+    </style>
+
+    <style name="CalendarLabelGrey" parent="CalendarItem">
+        <item name="android:layout_width">@dimen/progress_margin_top</item>
+        <item name="android:layout_height">@dimen/progress_margin_top</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/label_grey_story</item>
+        <item name="android:textSize">@dimen/message_text_size</item>
+    </style>
+
+    <style name="ErrorLabelWhite">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/empty_view_text_size</item>
+        <item name="android:textColor">@color/white_story</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/text_button_story</item>
+        <item name="android:background">@null</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="PinCodeItem">
+        <item name="android:layout_width">8dp</item>
+        <item name="android:layout_height">8dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+
+    <style name="PinCodeButtonItem">
+        <item name="android:layout_width">@dimen/amount_drugs_min_width</item>
+        <item name="android:layout_height">@dimen/amount_drugs_min_width</item>
+        <item name="android:layout_marginLeft">@dimen/drugs_total_margin</item>
+        <item name="android:layout_marginRight">@dimen/drugs_total_margin</item>
+        <item name="android:layout_marginTop">@dimen/small_margin_halved</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin_halved</item>
+        <item name="android:textColor">@color/white_story</item>
+        <item name="android:textSize">@dimen/text_size_big</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TabLayoutLight" parent="Base.Widget.Design.TabLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:tabStripEnabled">true</item>
+        <item name="tabIndicatorColor">@color/tab_indicator_story</item>
+        <item name="android:background">@null</item>
+        <item name="tabIndicatorHeight">@dimen/contacts_layout_margin</item>
+        <item name="tabSelectedTextColor">@color/white_story</item>
+        <item name="tabTextAppearance">@style/TabTextAppearance</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+    </style>
+
+    <style name="TabTextAppearance">
+        <item name="android:textSize">@dimen/text_big</item>
+        <item name="android:textColor">@color/label_blue_story</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorPrimary_story</item>
+        <item name="android:titleTextStyle">@style/ToolbarTitle</item>
+        <item name="android:textColorSecondary">@color/white_story</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+    </style>
+
+    <style name="ToolbarItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ToolbarTitle" parent="ToolbarItem">
+        <item name="android:layout_width">@dimen/toolbar_width</item>
+        <item name="android:textColor">@color/white_story</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">@dimen/empty_view_text_size</item>
+    </style>
+
+    <style name="ToolbarIconBack" parent="ToolbarItem">
+        <item name="android:background">@null</item>
+        <item name="android:layout_width">@dimen/chat_container_mrg_top</item>
+        <item name="android:layout_height">@dimen/chat_container_mrg_top</item>
+        <item name="android:layout_gravity">left</item>
+    </style>
+
+    <style name="ToolbarAction" parent="ToolbarItem">
+        <item name="android:layout_width">@dimen/chat_container_mrg_top</item>
+        <item name="android:layout_height">@dimen/chat_container_mrg_top</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="CalendarDay" parent="CalendarItem">
+        <item name="android:textSize">@dimen/text_big</item>
+    </style>
+
+    <style name="CalendarHighlight">
+        <item name="android:layout_marginTop">@dimen/drug_name_margin</item>
+        <item name="android:layout_marginBottom">@dimen/drug_name_margin</item>
+        <item name="android:layout_marginLeft">@dimen/zero_margin</item>
+        <item name="android:layout_marginRight">@dimen/zero_margin</item>
+        <item name="android:layout_width">@dimen/message_margin_end</item>
+        <item name="android:layout_height">@dimen/calendar_highlight_width</item>
+    </style>
+
+    <style name="ColoredButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">@dimen/colored_button_width</item>
+        <item name="android:textColor">@color/toolbar_color_story</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="menu_labels_style">
+        <item name="android:background">@color/transparent_story</item>
+        <item name="android:textColor">@color/white_story</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="ScaleButton">
+        <item name="android:layout_width">@dimen/scale_button_width</item>
+        <item name="android:layout_height">@dimen/scale_button_height</item>
+        <item name="android:textSize">@dimen/text_big</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="TextLabelSmall">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:paddingLeft">@dimen/edit_mrg_start_end</item>
+        <item name="android:paddingRight">@dimen/edit_mrg_start_end</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TextLabelSmallHighlighted" parent="TextLabelSmall">
+        <item name="android:paddingBottom">@dimen/send_ico_size</item>
+        <item name="android:textColor">@color/notification_story</item>
+    </style>
+
+    <style name="PharmacyCardStyle">
+        <item name="android:layout_marginLeft">@dimen/small_margin</item>
+        <item name="android:layout_marginRight">@dimen/small_margin</item>
+        <item name="cardBackgroundColor">@color/white_story</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="cardCornerRadius">@dimen/card_corners</item>
+        <item name="cardElevation">@dimen/card_elev</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+
+    <style name="Cloud">
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/pin_text_margin</item>
+        <item name="android:paddingLeft">@dimen/small_margin</item>
+        <item name="android:paddingRight">@dimen/small_margin</item>
+        <item name="android:textSize">@dimen/message_text_size</item>
+    </style>
+
+    <style name="Cloud.Gray">
+        <item name="android:textColor">@color/label_grey_story</item>
+    </style>
+
+    <style name="Cloud.Blue">
+        <item name="android:textColor">@color/white_story</item>
+    </style>
+
+    <style name="TextLabelDark.Empty">
+        <item name="android:textColor">@color/label_grey_story</item>
+    </style>
+
+    <dimen name="tab_text_size">14sp</dimen>
+
+    <style name="ShowCaseText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white_story</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+</resources>
