@@ -473,5 +473,6 @@
     <string name="download_pres_text">загрузить</string>
     <string name="delete">Удалить</string>
     <string name="network_error">Нет подключения к интернету</string>
+    <string name="finish_session">Сохранить сессию?</string>
 </resources>
 

@@ -83,9 +83,12 @@
     <color name="background_guide">#20000000</color>
     <color name="divider_title">#20000000</color>
     <color name="label_black">#20000000</color>
+
     <color name="disable_tab_text">#B2FFFFFF</color>
 
     <color name="media_background">#E60A0A0A</color>
     <color name="media_item_background">#B2000000</color>
+
+    <color name="graph_item_background">#36000000</color>
 
 </resources>

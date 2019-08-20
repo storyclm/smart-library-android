@@ -66,7 +66,7 @@ public class FeedPresenter {
         compositeDisposable.add(accountInteractor.getAccount(context.getString(R.string.CLIENT_ID), context.getString(R.string.CLIENT_SECRET),
                 context.getString(R.string.USERNAME), context.getString(R.string.PASSWORD), context.getString(R.string.GRAND_TYPE))
                 .doOnNext(this::setAccount)
-                .flatMap(account -> presentationInteractor.getPresentations(loadFromServer))
+                .flatMap(account -> presentationInteractor.getPresentations(loadFromServer, null))
                 .doOnNext(presentationEntities -> this.presentationEntities = presentationEntities)
                 .doOnSubscribe((o) -> view.showProgress())
                 .doOnTerminate(() -> view.hideProgress())

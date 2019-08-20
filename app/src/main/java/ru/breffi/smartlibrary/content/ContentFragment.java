@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +22,23 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import org.jetbrains.annotations.NotNull;
+import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.smartlibrary.media.MediaFilesActivity;
+import ru.breffi.smartlibrary.slides.SlidesTreeFragment;
 import ru.breffi.story.data.bridge.StoryBridge;
-import ru.breffi.story.data.bridge.modules.media.ContentBridgeView;
+import ru.breffi.story.data.bridge.StoryBridgeListener;
+import ru.breffi.story.data.bridge.modules.SessionModule;
+import ru.breffi.story.data.bridge.modules.base.BaseModule;
+import ru.breffi.story.data.bridge.modules.base.BaseModuleView;
+import ru.breffi.story.data.bridge.modules.map.MapModuleBridgeView;
+import ru.breffi.story.data.bridge.modules.media.MediaLibraryBridgeView;
+import ru.breffi.story.data.bridge.modules.presentation.PresentationModule;
+import ru.breffi.story.data.bridge.modules.presentation.PresentationModuleData;
+import ru.breffi.story.data.bridge.modules.presentation.PresentationModuleView;
+import ru.breffi.story.data.bridge.modules.ui.UiModuleBridgeView;
+import ru.breffi.story.data.models.Session;
 import ru.breffi.story.data.models.ViewerModuleData;
 import ru.breffi.story.domain.models.PresentationEntity;
 
@@ -43,7 +58,13 @@ import java.util.Map;
 public class ContentFragment extends Fragment implements ContentView,
         OnBackPressedListener,
         WebViewListener,
-        ContentBridgeView {
+        MediaLibraryBridgeView,
+        UiModuleBridgeView,
+        SessionModule.RestoreSessionListener,
+        PresentationModuleView,
+        StoryBridgeListener,
+        BaseModuleView,
+        MapModuleBridgeView {
 
     public static final String TAG = "ContentFragment";
     ContentPresenter mPresenter;
@@ -58,7 +79,11 @@ public class ContentFragment extends Fragment implements ContentView,
     public static final int REQUEST_PERMISSIONS_LOCATION = 99;
     private String path;
     private ImageView mediaButton;
+    private ImageView closeButton;
+    private ImageView mapButton;
     private PresentationEntity presentationEntity;
+    public boolean isFinishedSession = false;
+    private boolean isSlideRestored;
 
     public static ContentFragment newInstance(String path) {
 
@@ -87,9 +112,13 @@ public class ContentFragment extends Fragment implements ContentView,
         View v = inflater.inflate(R.layout.fragment_content, container, false);
         mWebView = v.findViewById(R.id.contentView);
         mediaButton = v.findViewById(R.id.media_button);
+        closeButton = v.findViewById(R.id.close_button);
+        mapButton = v.findViewById(R.id.map_button);
         presentationEntity = ((PresentationEntity) getArguments().getSerializable(PRESENTATION));
         mediaButton.setOnClickListener(view ->
                 startActivity(MediaFilesActivity.Companion.getIntent(getActivity(), presentationEntity.getId())));
+        closeButton.setOnClickListener(view -> showFinishSessionDialog());
+        mapButton.setOnClickListener(view -> showSlidesTree());
         if (getArguments() != null) {
             path = getActivity().getFilesDir() + "/storyCLM/" + presentationEntity.getId() + "/index.html";
         }
@@ -98,9 +127,25 @@ public class ContentFragment extends Fragment implements ContentView,
         return v;
     }
 
+    @Override
+    public void onDestroyView() {
+//        storyBridge.dispose();
+        super.onDestroyView();
+    }
+
     private void initBridge() {
         storyBridge = new StoryBridge(mWebView,
                 presentationEntity,
+                this,
+                this,
+                this,
+                this,
+                this,
+                this,
+                this,
+                getContext(),
+                getString(R.string.app_name),
+                BuildConfig.VERSION_NAME,
                 this);
         storyBridge.init();
     }
@@ -108,25 +153,36 @@ public class ContentFragment extends Fragment implements ContentView,
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (path != null) {
-            path = path.replaceAll("\\?", "%3f");
-            String path = "file://" + this.path;
-            Log.e("path", path);
-            try {
-                String decodePath = URLDecoder.decode(path, "UTF-8");
-                mWebView.loadUrl(decodePath);
-                Log.e("path", "decodePath = " + decodePath);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                mWebView.loadUrl(path);
-            }
-        }
+//        if (path != null) {
+//            path = path.replaceAll("\\?", "%3f");
+//            String path = "file://" + this.path;
+//            Log.e("path", path);
+//            try {
+//                String decodePath = URLDecoder.decode(path, "UTF-8");
+//                mWebView.loadUrl(decodePath);
+//                Log.e("path", "decodePath = " + decodePath);
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//                mWebView.loadUrl(path);
+//            }
+//        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
+
+    }
+
+    private void showSlidesTree() {
+        getActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.fragment_container, SlidesTreeFragment.Companion.newInstance(presentationEntity.getId()), SlidesTreeFragment.TAG)
+                .addToBackStack(SlidesTreeFragment.TAG)
+                .commit();
     }
 
     protected void initView() {
@@ -333,6 +389,118 @@ public class ContentFragment extends Fragment implements ContentView,
         } catch (Exception e) {
             Toast.makeText(getContext(), R.string.media_error, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void hideCloseButton() {
+        if (closeButton != null) {
+            closeButton.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void hideSystemButtons() {
+        if (getActivity().getWindow() != null) {
+            View decorView = getActivity().getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+    }
+
+    public void showFinishSessionDialog() {
+        Log.e("showFinishSessionDialog", presentationEntity.isNeedConfirmation() + " ");
+        if (presentationEntity.isNeedConfirmation()) {
+            AlertDialog.Builder builder
+                    = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.finish_session)
+                    .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                        storyBridge.completeSession(Session.State.USER_NOS_SAVE);
+                        dialog.dismiss();
+                        isFinishedSession = true;
+                        if (getActivity() != null) {
+                            getActivity().onBackPressed();
+                        }
+                    })
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        storyBridge.completeSession(Session.State.COMPLETED);
+                        dialog.dismiss();
+                        isFinishedSession = true;
+                        if (getActivity() != null) {
+                            getActivity().onBackPressed();
+                        }
+                    })
+                    .show();
+        } else {
+            storyBridge.completeSession(Session.State.USER_NOS_SAVE);
+            isFinishedSession = true;
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public void onSlideRestore(String slideName) {
+        isSlideRestored = true;
+        String slideUrl = "file://" + getActivity().getFilesDir() + "/storyCLM/" + presentationEntity.getId() + "/" + slideName;
+        Log.e(SessionModule.TAG, slideUrl);
+        mWebView.loadUrl(slideUrl);
+    }
+
+    @Override
+    public void openPresentation(PresentationModuleData presentationModuleData) {
+        String slideUrl = "file://" + getActivity().getFilesDir() + "/storyCLM/" + presentationModuleData.getPresId() + "/" + presentationModuleData.getSlideName();
+        Log.e(PresentationModule.TAG, slideUrl);
+        mWebView.loadUrl(slideUrl);
+    }
+
+    @Override
+    public void closePresentation() {
+        showFinishSessionDialog();
+    }
+
+    @Override
+    public void onBridgeInitializeCompleted() {
+        if (path != null && !isSlideRestored) {
+            path = path.replaceAll("\\?", "%3f");
+            String path = "file://" + this.path;
+            Log.e("path", path);
+            try {
+                String decodePath = URLDecoder.decode(path, "UTF-8");
+                mWebView.loadUrl(decodePath);
+                Log.e("path", "decodePath = " + decodePath);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                mWebView.loadUrl(path);
+            }
+        }
+    }
+
+    @Override
+    public void onBridgeInitializeFailed() {
+
+    }
+
+    @Override
+    public void openPresentationSlide(@NotNull PresentationModuleData presentationModuleData) {
+        String slideUrl = "file://" + getActivity().getFilesDir() + "/storyCLM/" + presentationEntity.getId() + "/" + presentationModuleData.getSlideName();
+        Log.e(BaseModule.TAG, slideUrl);
+        mWebView.loadUrl(slideUrl);
+    }
+
+    @Override
+    public void showSlidesMapButton() {
+        if (mapButton != null) {
+            mapButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideSlidesMapButton() {
+        if (mapButton != null) {
+            mapButton.setVisibility(View.GONE);
         }
     }
 }
