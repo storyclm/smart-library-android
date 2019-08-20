@@ -36,8 +36,8 @@ configuration.xml, который содержит в себе все необх
 - configuration.xml -> /app/src/stageContentPart/res/values/configuration.xml
 
 Пример файла configuration.xml 
-
-    <?xml version="1.0" encoding="utf-8"?>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
     <resources>
         <string name="CLIENT_ID">client_id</string>
         <string name="CLIENT_SECRET">client_secret</string>
@@ -45,17 +45,70 @@ configuration.xml, который содержит в себе все необх
         <string name="PASSWORD">password</string>
         <string name="GRAND_TYPE">grand_type</string>
     </resources>
+ ```
 
 #### Аутентификация 
 
 Для аутенификация при помощи username и password нужно использовать
 соотетствующий интерактор, который можно инжектить при помощи Dagger или
-инициализировать вручную
+инициализировать вручную. Данные для аутентифиуации будут считываться с
+файла configuration.xml
 ```kotlin
 
 accountInteractor.getAccount(context.getString(R.string.CLIENT_ID),
                             context.getString(R.string.CLIENT_SECRET),
                             context.getString(R.string.USERNAME),
                             context.getString(R.string.PASSWORD),
+                            context.getString(R.string.GRAND_TYPE))                          
+```
+Для аутенификация при помощи ключа клиента нужно использовать этот же
+метод без данных о пользователе
+```kotlin
+
+accountInteractor.getAccount(context.getString(R.string.CLIENT_ID),
+                            context.getString(R.string.CLIENT_SECRET),
+                            "",
+                            "",
                             context.getString(R.string.GRAND_TYPE))
+```
+
+#### Работа с контентом 
+
+##### Загрузка презентаций 
+Загрузка доступных пользователю презентаций
+осуществляется с помошью интерактора PresentationInteractor, который
+можно инжектить при помощи Dagger или инициализировать вручную.
+
+```kotlin
+/**
+* boolean loadFromServer - загрузка презентаций с сервера или локального хранилища
+* Integer clientId - загрузка презентаций конкретного клиента, доступно использование null (без ограничений по клиентам)
+*/
+presentationInteractor.getPresentations(loadFromServer, clientId)                        
+```
+
+##### Загрузка контента презентации 
+Загрузка контента презентации осуществляется с помошью интерактора
+PresentationContentInteractor, который можно инжектить при помощи Dagger или
+инициализировать вручную.
+
+```kotlin
+/**
+* boolean loadFromServer - загрузка презентаций с сервера или локального хранилища
+* Integer clientId - загрузка презентаций конкретного клиента, доступно использование null (без ограничений по клиентам)
+*/
+presentationInteractor.getPresentations(loadFromServer, clientId)                        
+```
+
+##### Загрузка клиентов 
+Загрузка доступных пользователю клиентов осуществляется с помошью
+интерактора ClientInteractor, который можно инжектить при помощи Dagger
+или инициализировать вручную.
+
+```kotlin
+/**
+* boolean loadFromServer - загрузка презентаций с сервера или локального хранилища
+* Integer clientId - загрузка презентаций конкретного клиента, доступно использование null (без ограничений по клиентам)
+*/
+clientInteractor.getClients(loadFromServer, clientId)                      
 ```
