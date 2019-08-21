@@ -94,10 +94,77 @@ PresentationContentInteractor, который можно инжектить пр
 
 ```kotlin
 /**
-* boolean loadFromServer - загрузка презентаций с сервера или локального хранилища
-* Integer clientId - загрузка презентаций конкретного клиента, доступно использование null (без ограничений по клиентам)
+* 
+* Метод загружает слайды, медиафайлы и архив с контентом
+* PresentationEntity presentationEntity - модель загружаемой презентации
 */
-presentationInteractor.getPresentations(loadFromServer, clientId)                        
+presentationContentInteractor.getPresentationContent(presentationEntity)                      
+```
+
+##### Отслеживание процесса загрузки контента 
+Метод класса PresentationContentInteractor излучает модель с информацией о текщем прогрессе загрузки
+презентации
+
+```kotlin
+/**
+* @return Observable<DownloadEntity<PresentationEntity>>
+*/
+presentationContentInteractor.listenContentLoading()                    
+```
+
+##### Отслеживание завершения загрузки контента презентации
+Метод класса PresentationContentInteractor излучает модель текущей
+презентации с её актуальными данными после завершения загрузки контента
+
+```kotlin
+/**
+* @return Observable<PresentationEntity>
+*/
+presentationContentInteractor.listenDownloadFinish()                    
+```
+
+##### Удаление контента презентации 
+Метод класса PresentationContentInteractor излучает модель текущей
+презентации с её актуальными данными после удаления контента. При этом
+все весь локальный контент презентации удаляется, а сама модель
+презентации продолжает храниться в БД
+
+```kotlin
+/**
+* PresentationEntity presentationEntity - модель презентации для удаления её контента
+* @return Observable<PresentationEntity> - модель презентации после удаления контента
+*/
+presentationContentInteractor.removePresentationContent(presentationEntity)                   
+```
+
+##### Обновление контента презентации 
+Метод класса PresentationContentInteractor обновляет существующий
+контент презентации
+
+```kotlin
+/**
+* PresentationEntity presentationEntity - модель обновляемой презентации
+*/
+presentationContentInteractor.updatePresentationContent(presentationEntity)                      
+```
+
+##### Получение списка загружаемых в данный момент презентаций
+
+```kotlin
+/**
+* @return List<PresentationEntity>
+*/
+presentationContentInteractor.getDownloadingPresentations()                      
+```
+
+##### Остановка загрузки контента презентации 
+
+```kotlin
+/**
+* PresentationEntity presentationEntity - модель презентации, загрузку которой нужно остановить
+* @return Observable<PresentationEntity> - модель презентации после остановки загрузки
+*/
+presentationContentInteractor.stopPresentationContentLoading(presentationEntity)                 
 ```
 
 ##### Загрузка клиентов 
