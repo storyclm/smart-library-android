@@ -180,5 +180,5 @@ presentationContentInteractor.stopPresentationContentLoading(presentationEntity)
 clientInteractor.getClients(loadFromServer, clientId)                      
 ```
 ## Синхронизация контента
-При вызове методов [getClients]("#Загрузка-клиентов") и
+При вызове методов [getClients]("#загрузка-клиентов") и
 [getPresentations]("#Загрузка-презентаций")
