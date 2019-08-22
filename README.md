@@ -180,5 +180,143 @@ presentationContentInteractor.stopPresentationContentLoading(presentationEntity)
 clientInteractor.getClients(loadFromServer, clientId)                      
 ```
 ## Синхронизация контента
-При вызове методов [getClients](#Загрузка-клиентов) и
-[getPresentations](#Загрузка-презентаций)
+##### Синхронизация клиентов
+При вызове метода [getClients](#Загрузка-клиентов) список доступных
+клиентов грузится с сервера и обновляется в локальной БД
+##### Синхронизация презентаций
+При вызове метода [getPresentations](#Загрузка-презентаций) с сервера
+грузится список клиентов и их доступные презентации. Далее эти
+презентации сравниваются с локальными. Если какой-то из презентаций
+клиентов нет в локальной БД, то она загружается с сервера и сохраняется
+в лоакльную БД. Если ревизия локальной презентации не совподает с
+ревизией этой же презентации у клиента, то для этой презентации
+становится возможным её обновление контента. 
+
+## Аналитика
+Аналитика реализована в библиотеке
+[Story IOT Android](https://github.com/storyclm/story-iot-android). Под
+аналитикой подразумевается отправка собранных согласно бизнес-логике
+данных на сервер. Библиотека способна отправлять на сервер и получать
+данные любого вида, включая файлы. Подробная документация описана в
+репозитории библиотеки. 
+
+## Мост
+Content Component позволяет разработчикам создавать контент (презентации) с функционалом, сопоставимым с функционалом и надежностью промышленных приложений, используя только веб-технологии, такие как HTML, CSS, и JavaScript а также используя технологию StoryBridge.
+
+StoryBridge - это технология, разработанная Breffi, позволяющая вызывать функции нативного кода клиентского приложения из контента с высокой степенью надежности и асинхронности.
+
+Принципиально, StoryBridge состоит из двух частей:
+
+- SCLMBridgeModule модуль, который реализован на стороне нативного кода и является частью клиентского приложения;
+- storyclm.js - библиотека, встраиваемая в контент.
+storyclm.js - это библиотека, предоставляющая доступ к системным функциям (API) платформы Story из контента. Библиотека должна использоваться в HTML5 приложениях для Story. В других CLM системах, а также без Story данная библиотека работать не будет.
+
+Основная задача библиотеки посылать сообщения в StoryBridge и обрабатывать входящие сообщения. Это часть технологии StoryBridge на стороне контента. Web приложение вызывает методы библиотеки, которая в свою очередь создает команду и посылает в нативную часть StoryBridge, после выполнения, клиентское приложение, используя мост, отправляет результат (команду) в WebView, где эту команду и данные перехватывает библиотека, которая в свою очередь вызывает callback. Таким образом, результат работы нативного кода возвращается в Web приложение. Web приложению не важно какой операционной системе принадлежит WebView, оно просто оперирует методами библиотеки. Тем самым приложение может одинаково работать на всех клиентах Content Component независимо от операционной системы. Библиотека отвечает за взаимодействие на стороне Web приложения и является его частью. Библиотека имеет единую реализацию под все операционные системы.
+
+SCLMBridgeModule - это часть технологии StoryBridge на стороне нативного кода, которая умеет принимать сообщения от WebView и контента, находить и запускать модули-обработчики и возвращать результат работы обратно в WebView. Данный модуль управляет процессом по доставке сообщений и отвечает за надежную их обработку.
+
+##### Базовый интерфейс для модулей моста
+
+```java
+package ru.breffi.story.data.bridge;
+
+import ru.breffi.story.data.models.StoryMessage;
+
+public interface StoryBridgeModule {
+    void init();
+    StoryMessage execute(StoryMessage requestMessage);
+    void dispose();
+}
+```
+##### Пример модуля моста
+```kotlin
+package ru.breffi.story.data.bridge.modules.map
+
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import org.json.JSONArray
+import org.json.JSONObject
+import ru.breffi.story.data.bridge.StoryBridgeModule
+import ru.breffi.story.data.bridge.modules.StoryBridgeCommand
+import ru.breffi.story.data.database.DataManager
+import ru.breffi.story.data.models.StoryMessage
+import ru.breffi.story.domain.models.PresentationEntity
+
+class MapModule(
+    private var presentationEntity: PresentationEntity,
+    private var context: Context?,
+    private var mapModuleBridgeView: MapModuleBridgeView
+) : StoryBridgeModule {
+
+    companion object {
+        const val TAG = "MapModule"
+    }
+
+    private var responseMessage = StoryMessage()
+    private lateinit var dataManager: DataManager
+
+    override fun init() {
+
+    }
+
+    override fun execute(requestMessage: StoryMessage): StoryMessage? {
+        responseMessage.guid = requestMessage.guid
+        responseMessage.command = requestMessage.command
+        responseMessage.id = requestMessage.id
+        return executeMessage(requestMessage)
+    }
+
+    private fun executeMessage(requestMessage: StoryMessage): StoryMessage? {
+        dataManager = DataManager()
+        Log.e(TAG, requestMessage.command + " " + requestMessage.data)
+        return when (requestMessage.command) {
+            StoryBridgeCommand.GET_MAP -> getMap(requestMessage)
+            StoryBridgeCommand.HIDE_MAP_BUTTON -> hideMapButton(requestMessage)
+            StoryBridgeCommand.SHOW_MAP_BUTTON -> showMapButton(requestMessage)
+            else -> null
+        }
+    }
+
+    private fun showMapButton(requestMessage: StoryMessage): StoryMessage? {
+        Handler(Looper.getMainLooper()).post { mapModuleBridgeView.showSlidesMapButton() }
+        return responseMessage
+    }
+
+    private fun hideMapButton(requestMessage: StoryMessage): StoryMessage? {
+        Handler(Looper.getMainLooper()).post { mapModuleBridgeView.hideSlidesMapButton() }
+        return responseMessage
+    }
+
+    private fun getMap(requestMessage: StoryMessage): StoryMessage? {
+        val responseObj = JSONObject()
+        val data = JSONObject()
+        for (slide in presentationEntity.slides) {
+            val slideJsonArray = JSONArray()
+            val linkedSlideList = slide.linkedSlides.split(",").toList()
+            if (linkedSlideList.isNotEmpty()) {
+                for (linkedSlide in linkedSlideList) {
+                    slideJsonArray.put(linkedSlide)
+                }
+            }
+            data.put(slide.name, slideJsonArray)
+        }
+        responseObj.put("Data", data)
+        responseObj.put("ErrorCode", 200)
+        responseObj.put("ErrorMessage", "")
+        responseObj.put("Status", "Success")
+        responseObj.put("GUID", responseMessage.guid)
+        responseMessage.response = responseObj.toString()
+        return responseMessage
+    }
+
+    override fun dispose() {
+
+    }
+
+}
+```
+
+Для создания своего модуля для StoryBridge вам нужно реализовать базовый
+[интерфейс](#Базовый-интерфейс-для-модулей-моста) модуля моста
