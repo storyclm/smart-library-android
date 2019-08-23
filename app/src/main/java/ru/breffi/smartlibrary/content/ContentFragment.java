@@ -25,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import org.jetbrains.annotations.NotNull;
 import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
+import ru.breffi.smartlibrary.bridge.TestBridgeModule;
 import ru.breffi.smartlibrary.media.MediaFilesActivity;
 import ru.breffi.smartlibrary.slides.SlidesTreeFragment;
 import ru.breffi.story.data.bridge.StoryBridge;
@@ -46,10 +47,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -147,6 +145,7 @@ public class ContentFragment extends Fragment implements ContentView,
                 getString(R.string.app_name),
                 BuildConfig.VERSION_NAME,
                 this);
+        storyBridge.addModule(new TestBridgeModule(), Collections.singletonList(TestBridgeModule.COMMAND));
         storyBridge.init();
     }
 
