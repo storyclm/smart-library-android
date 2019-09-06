@@ -47,6 +47,18 @@ configuration.xml, который содержит в себе все необх
     </resources>
  ```
 
+Изменить урлы для сервисов аутентификации и получения конетнта можно в
+build.gradle файле модуля app, изменив соответствующие поля.
+
+- CLM_API -> сервис для работы с контентом
+- CLM_AUTH -> сервис аутентификации
+- WITH_FULL_CONTENT -> загрузка контента полностью/частично
+```groovy
+buildConfigField "String", "CLM_API", "\"https://api.storyclm.com/v1/\""
+buildConfigField "String", "CLM_AUTH", "\"https://auth.storyclm.com/\""
+buildConfigField "Boolean", "WITH_FULL_CONTENT", "true"
+```
+
 ## Аутентификация 
 
 Для аутенификация при помощи username и password нужно использовать

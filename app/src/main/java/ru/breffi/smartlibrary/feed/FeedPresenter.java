@@ -6,9 +6,18 @@ import android.content.ServiceConnection;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.story.data.network.NetworkUtil;
 import ru.breffi.story.domain.interactors.AccountInteractor;
@@ -17,12 +26,6 @@ import ru.breffi.story.domain.models.AccountEntity;
 import ru.breffi.story.domain.models.DownloadEntity;
 import ru.breffi.story.domain.models.PresentationEntity;
 import ru.breffi.story.domain.models.ProgressEntity;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 import static ru.breffi.smartlibrary.content.ContentActivity.PRESENTATION;
@@ -86,7 +89,7 @@ public class FeedPresenter {
     void loadPresentation(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
         if (isContentServiceValid() && NetworkUtil.getInstance().isConnected(context)) {
             progressUpdateListeners.put(presentationEntity, progressUpdateListener);
-            Disposable disposable = contentService.presentationContentInteractor.getPresentationContent(presentationEntity, false)
+            Disposable disposable = contentService.presentationContentInteractor.getPresentationContent(presentationEntity, BuildConfig.WITH_FULL_CONTENT)
                     .subscribe(loaded -> {
                     }, this::handleError);
             compositeDisposable.add(disposable);
@@ -193,7 +196,7 @@ public class FeedPresenter {
         if (isContentServiceValid() && NetworkUtil.getInstance().isConnected(context)) {
             progressUpdateListeners.put(getChangablePresentation(), progressUpdateListener);
             getChangablePresentation().setNowUpdating(true);
-            Disposable disposable = contentService.presentationContentInteractor.updatePresentationContent(getChangablePresentation(), true)
+            Disposable disposable = contentService.presentationContentInteractor.updatePresentationContent(getChangablePresentation(), BuildConfig.WITH_FULL_CONTENT)
                     .doOnSubscribe((o) -> {
                         if (getChangablePresentation() != null) {
                             Log.e("update pres", getChangablePresentation().toString());

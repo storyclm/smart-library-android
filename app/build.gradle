@@ -39,16 +39,28 @@ android {
     flavorDimensions "default"
     productFlavors {
         prodContentFull {
-
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CLM_API", "\"https://api.storyclm.com/v1/\""
+            buildConfigField "String", "CLM_AUTH", "\"https://auth.storyclm.com/\""
+            buildConfigField "Boolean", "WITH_FULL_CONTENT", "true"
         }
         stageContentFull {
-
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CLM_API", "\"https://staging-api.storyclm.com/v1/\""
+            buildConfigField "String", "CLM_AUTH", "\"https://staging-auth.storyclm.com/\""
+            buildConfigField "Boolean", "WITH_FULL_CONTENT", "true"
         }
         prodContentPart {
-
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CLM_API", "\"https://api.storyclm.com/v1/\""
+            buildConfigField "String", "CLM_AUTH", "\"https://auth.storyclm.com/\""
+            buildConfigField "Boolean", "WITH_FULL_CONTENT", "false"
         }
         stageContentPart {
-
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CLM_API", "\"https://staging-api.storyclm.com/v1/\""
+            buildConfigField "String", "CLM_AUTH", "\"https://staging-auth.storyclm.com/\""
+            buildConfigField "Boolean", "WITH_FULL_CONTENT", "false"
         }
     }
 
@@ -61,7 +73,7 @@ android {
     }
 }
 
-def daggerVersion = '2.15'
+def daggerVersion = '2.22.1'
 def retrofitVersion = '2.5.0'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -88,8 +100,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
-    kapt 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    kapt 'com.github.bumptech.glide:compiler:4.9.0'
 
     //Progress view
     implementation 'com.github.antonKozyriatskyi:CircularProgressIndicator:1.2.2'
@@ -102,7 +114,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     //Rx
     api 'io.reactivex.rxjava2:rxandroid:2.1.0'
