@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CLIENT_ID">client_3_2</string>
+    <string name="CLIENT_SECRET">3b924f6ec5b14ffeb66316de34edaa448e03f71dab934b99a4bb50d8c4b6aee7</string>
+    <string name="USERNAME">79312709549</string>
+    <string name="PASSWORD">1910</string>
+    <string name="GRAND_TYPE">password</string>
+</resources>
