@@ -24,8 +24,9 @@ class SlidesTreePresenter @Inject constructor(
     fun initSlidesTree(presId: Int?) {
         presId?.let {
             presentationInteractor.getPresentation(presId)
-                .doOnNext { pres -> presentation = pres }
-                .map { pres -> buildTree(pres) }
+                .filter { optional -> optional.isPresent }
+                .doOnNext { pres -> presentation = pres.get() }
+                .map { pres -> buildTree(pres.get()) }
                 .subscribe({ graph -> view.showSlidesTree(graph) }, { t: Throwable -> t.printStackTrace() })
         }
     }

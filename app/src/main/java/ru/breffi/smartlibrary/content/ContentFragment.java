@@ -15,39 +15,49 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.*;
+import android.webkit.JsResult;
+import android.webkit.MimeTypeMap;
+import android.webkit.WebBackForwardList;
+import android.webkit.WebChromeClient;
+import android.webkit.WebHistoryItem;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import org.jetbrains.annotations.NotNull;
 import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.smartlibrary.bridge.TestBridgeModule;
 import ru.breffi.smartlibrary.media.MediaFilesActivity;
 import ru.breffi.smartlibrary.slides.SlidesTreeFragment;
-import ru.breffi.story.data.bridge.StoryBridge;
+import ru.breffi.story.data.bridge.StoryBridgeFactory;
 import ru.breffi.story.data.bridge.StoryBridgeListener;
 import ru.breffi.story.data.bridge.modules.SessionModule;
-import ru.breffi.story.data.bridge.modules.base.BaseModule;
 import ru.breffi.story.data.bridge.modules.base.BaseModuleView;
 import ru.breffi.story.data.bridge.modules.map.MapModuleBridgeView;
 import ru.breffi.story.data.bridge.modules.media.MediaLibraryBridgeView;
-import ru.breffi.story.data.bridge.modules.presentation.PresentationModule;
 import ru.breffi.story.data.bridge.modules.presentation.PresentationModuleData;
 import ru.breffi.story.data.bridge.modules.presentation.PresentationModuleView;
 import ru.breffi.story.data.bridge.modules.ui.UiModuleBridgeView;
 import ru.breffi.story.data.models.Session;
 import ru.breffi.story.data.models.ViewerModuleData;
 import ru.breffi.story.domain.models.PresentationEntity;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.net.URLDecoder;
-import java.util.*;
 
 
 /**
@@ -132,7 +142,7 @@ public class ContentFragment extends Fragment implements ContentView,
     }
 
     private void initBridge() {
-        storyBridge = new StoryBridge(mWebView,
+        storyBridge = StoryBridgeFactory.create(mWebView,
                 presentationEntity,
                 this,
                 this,
@@ -444,14 +454,14 @@ public class ContentFragment extends Fragment implements ContentView,
     public void onSlideRestore(String slideName) {
         isSlideRestored = true;
         String slideUrl = "file://" + getActivity().getFilesDir() + "/storyCLM/" + presentationEntity.getId() + "/" + slideName;
-        Log.e(SessionModule.TAG, slideUrl);
+        Log.e("onSlideRestore", slideUrl);
         mWebView.loadUrl(slideUrl);
     }
 
     @Override
     public void openPresentation(PresentationModuleData presentationModuleData) {
         String slideUrl = "file://" + getActivity().getFilesDir() + "/storyCLM/" + presentationModuleData.getPresId() + "/" + presentationModuleData.getSlideName();
-        Log.e(PresentationModule.TAG, slideUrl);
+        Log.e("openPresentation", slideUrl);
         mWebView.loadUrl(slideUrl);
     }
 
@@ -485,7 +495,7 @@ public class ContentFragment extends Fragment implements ContentView,
     @Override
     public void openPresentationSlide(@NotNull PresentationModuleData presentationModuleData) {
         String slideUrl = "file://" + getActivity().getFilesDir() + "/storyCLM/" + presentationEntity.getId() + "/" + presentationModuleData.getSlideName();
-        Log.e(BaseModule.TAG, slideUrl);
+        Log.e("openPresentationSlide", slideUrl);
         mWebView.loadUrl(slideUrl);
     }
 

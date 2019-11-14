@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">SmartLibrary</string>
     <string name="feed_tab">Лента</string>
     <string name="catalog_tab">Каталог</string>
     <string name="download_dialog">Загрузить презентацию?</string>

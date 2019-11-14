@@ -12,7 +12,14 @@ class MainFilesPresenter @Inject constructor(var presentationInteractor : Presen
 
     fun retrieveMediaFiles(presentationId : Int){
         presentationInteractor.getPresentation(presentationId)
-            .subscribe({presentation: PresentationEntity? ->  presentation?.let { handleMediaFiles(presentation) }}, { t: Throwable -> t.printStackTrace() })
+            .subscribe(
+                { presentation ->
+                    if (presentation.isPresent) {
+                        handleMediaFiles(presentation.get())
+                    }
+                },
+                { t: Throwable -> t.printStackTrace() }
+            )
     }
 
     private fun handleMediaFiles(presentation: PresentationEntity) {

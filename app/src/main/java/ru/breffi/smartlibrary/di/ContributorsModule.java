@@ -7,6 +7,7 @@ import ru.breffi.smartlibrary.feed.FeedFragment;
 import ru.breffi.smartlibrary.main.MainActivity;
 import ru.breffi.smartlibrary.media.FilesFragment;
 import ru.breffi.smartlibrary.media.MediaFilesActivity;
+import ru.breffi.smartlibrary.slides.SlidesTreeFragment;
 
 @Module
 public interface ContributorsModule {
@@ -19,6 +20,9 @@ public interface ContributorsModule {
 
     @ContributesAndroidInjector
     FilesFragment contributeFilesFragment();
+
+    @ContributesAndroidInjector
+    SlidesTreeFragment contributeSlidesTreeFragment();
 
     @ContributesAndroidInjector
     MediaFilesActivity contributeMediaFilesActivity();

@@ -36,30 +36,34 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    flavorDimensions "apimode", "contentmode"
+
     productFlavors {
-        prodContentFull {
+
+        prod {
+            dimension "apimode"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "CLM_API", "\"https://api.storyclm.com/v1/\""
             buildConfigField "String", "CLM_AUTH", "\"https://auth.storyclm.com/\""
-            buildConfigField "Boolean", "WITH_FULL_CONTENT", "true"
+            resValue "string", "app_name", "SmartLibrary"
         }
-        stageContentFull {
+
+        stage {
+            dimension "apimode"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "CLM_API", "\"https://staging-api.storyclm.com/v1/\""
             buildConfigField "String", "CLM_AUTH", "\"https://staging-auth.storyclm.com/\""
+            applicationIdSuffix ".staging"
+            resValue "string", "app_name", "SmartLibrary Staging"
+        }
+
+        contentFull {
+            dimension "contentmode"
             buildConfigField "Boolean", "WITH_FULL_CONTENT", "true"
         }
-        prodContentPart {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "CLM_API", "\"https://api.storyclm.com/v1/\""
-            buildConfigField "String", "CLM_AUTH", "\"https://auth.storyclm.com/\""
-            buildConfigField "Boolean", "WITH_FULL_CONTENT", "false"
-        }
-        stageContentPart {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "CLM_API", "\"https://staging-api.storyclm.com/v1/\""
-            buildConfigField "String", "CLM_AUTH", "\"https://staging-auth.storyclm.com/\""
+
+        contentPart {
+            dimension "contentmode"
             buildConfigField "Boolean", "WITH_FULL_CONTENT", "false"
         }
     }
@@ -90,7 +94,6 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
 
-    api project(path: ':content-component')
 
     //Dagger 2 - DI library
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -121,27 +124,11 @@ dependencies {
     api 'io.reactivex.rxjava2:rxjava:2.2.5'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
-    //Javax
-    api "javax.inject:javax.inject:1"
-
-    //Local secure storage
-    implementation "com.orhanobut:hawk:2.0.1"
-
-    //Zip lib
-    implementation 'net.lingala.zip4j:zip4j:1.3.1'
-
-    //Files loader
-    implementation 'com.coolerfall:android-http-download-manager:1.6.1'
-
     //View for tree showing
     implementation 'de.blox:graphview:0.6.0'
 
-    //Story IoT
-    implementation 'com.github.storyclm:story-iot-android:1.0.5'
-
-    //JWT parser
-    implementation ('com.auth0.android:jwtdecode:1.3.0'){
-        exclude group: 'com.android.support', module: 'appcompat-v7'
+    implementation('ru.breffi.story:storycontent:0.5.0@aar') {
+        transitive=true
     }
 
 }

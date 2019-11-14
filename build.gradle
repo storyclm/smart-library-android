@@ -24,6 +24,9 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        maven {
+            url "https://raw.githubusercontent.com/storyclm/story-content-android/master"
+        }
     }
 }
 
