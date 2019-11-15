@@ -3,7 +3,7 @@ package ru.breffi.smartlibrary.feed;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 

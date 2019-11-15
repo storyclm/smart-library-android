@@ -4,12 +4,12 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
                 style="@style/Toolbar"
                 app:contentInsetEnd="@dimen/toolbar_inset"
                 app:contentInsetStart="@dimen/toolbar_inset">
@@ -25,9 +25,9 @@
                         android:text="@string/library"/>
 
             </FrameLayout>
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -37,7 +37,7 @@
                 app:tabIndicatorColor="@color/white"
                 app:tabSelectedTextColor="@android:color/white"
                 app:tabTextColor="@color/unselected_tab"/>
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
 
     <ru.breffi.smartlibrary.views.NonSwipeableViewPager

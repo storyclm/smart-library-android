@@ -1,18 +1,21 @@
 package ru.breffi.smartlibrary.feed.menu;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import ru.breffi.smartlibrary.R;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.io.Serializable;
+
+import ru.breffi.smartlibrary.R;
 
 
 public class PresentationMenuFragment extends BottomSheetDialogFragment {
@@ -60,7 +63,7 @@ public class PresentationMenuFragment extends BottomSheetDialogFragment {
     private void showWrapContentHeight(View view) {
         view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
-            FrameLayout bottomSheet = dialog.findViewById(android.support.design.R.id.design_bottom_sheet);
+            FrameLayout bottomSheet = dialog.findViewById(R.id.design_bottom_sheet);
             BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             behavior.setPeekHeight(0);

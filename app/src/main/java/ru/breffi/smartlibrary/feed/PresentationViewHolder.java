@@ -1,21 +1,28 @@
 package ru.breffi.smartlibrary.feed;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
-import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.github.mmin18.widget.RealtimeBlurView;
-import ru.breffi.smartlibrary.R;
-import ru.breffi.story.domain.models.PresentationEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator;
+import ru.breffi.smartlibrary.R;
+import ru.breffi.story.domain.models.PresentationEntity;
 
 public class PresentationViewHolder extends RecyclerView.ViewHolder implements ProgressUpdateListener {
 

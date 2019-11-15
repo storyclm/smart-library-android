@@ -4,8 +4,8 @@ package ru.breffi.smartlibrary.content;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.story.domain.models.PresentationEntity;
 
