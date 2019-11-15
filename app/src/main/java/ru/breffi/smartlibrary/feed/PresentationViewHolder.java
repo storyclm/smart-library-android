@@ -84,9 +84,9 @@ public class PresentationViewHolder extends RecyclerView.ViewHolder implements P
     }
 
     private void setDeletingProgressIndicator(PresentationEntity presentation) {
-        if(presentation.isNowDeleting()){
+        if (presentation.isNowDeleting()) {
             deletingProgressBar.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             deletingProgressBar.setVisibility(View.GONE);
         }
     }
@@ -114,10 +114,10 @@ public class PresentationViewHolder extends RecyclerView.ViewHolder implements P
     private void initButtons(PresentationEntity presentation) {
         if (!presentation.getWithContent()) {
             downloadTextView.setVisibility(View.VISIBLE);
-            infoImageView.setVisibility(View.INVISIBLE);
+//            infoImageView.setVisibility(View.INVISIBLE);
         } else {
             downloadTextView.setVisibility(View.INVISIBLE);
-            infoImageView.setVisibility(View.VISIBLE);
+//            infoImageView.setVisibility(View.VISIBLE);
         }
 
         if (!presentation.getNeedUpdate()) {
@@ -132,6 +132,12 @@ public class PresentationViewHolder extends RecyclerView.ViewHolder implements P
         } else {
             newTextView.setVisibility(View.VISIBLE);
 //            infoImageView.setVisibility(View.INVISIBLE);
+        }
+
+        if (presentation.isRead() && presentation.getWithContent()) {
+            infoImageView.setVisibility(View.VISIBLE);
+        } else {
+            infoImageView.setVisibility(View.GONE);
         }
     }
 

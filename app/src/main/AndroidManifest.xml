@@ -22,8 +22,7 @@
             <!--</intent-filter>-->
         </activity>
         <activity
-                android:name=".main.MainActivity"
-                android:configChanges="orientation">
+                android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

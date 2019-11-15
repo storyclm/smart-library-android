@@ -22,7 +22,7 @@ public interface ContributorsModule {
     FilesFragment contributeFilesFragment();
 
     @ContributesAndroidInjector
-    SlidesTreeFragment contributeSlidesTreeFragment();
+    SlidesTreeFragment slidesTreeFragmentFragment();
 
     @ContributesAndroidInjector
     MediaFilesActivity contributeMediaFilesActivity();

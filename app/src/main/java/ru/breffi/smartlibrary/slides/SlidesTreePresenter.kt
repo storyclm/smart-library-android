@@ -2,6 +2,7 @@ package ru.breffi.smartlibrary.slides
 
 import android.content.Context
 import android.util.Log
+import com.annimon.stream.Optional
 import de.blox.graphview.Graph
 import de.blox.graphview.Node
 import ru.breffi.story.domain.interactors.PresentationInteractor
@@ -24,15 +25,20 @@ class SlidesTreePresenter @Inject constructor(
     fun initSlidesTree(presId: Int?) {
         presId?.let {
             presentationInteractor.getPresentation(presId)
-                .filter { optional -> optional.isPresent }
-                .doOnNext { pres -> presentation = pres.get() }
-                .map { pres -> buildTree(pres.get()) }
+                .doOnNext { presentationOptional ->
+                    if (presentationOptional.isPresent) {
+                        presentation = presentationOptional.get()
+                    }
+                }
+                .map { presentationOptional -> buildTree(presentationOptional) }
                 .subscribe({ graph -> view.showSlidesTree(graph) }, { t: Throwable -> t.printStackTrace() })
         }
     }
 
-    private fun buildTree(pres: PresentationEntity): Graph {
-        buildTreeNode(findFirstSlide(pres.slides))
+    private fun buildTree(presentationOptional: Optional<PresentationEntity>): Graph {
+        if (presentationOptional.isPresent) {
+            buildTreeNode(findFirstSlide(presentationOptional.get().slides))
+        }
         return graph
     }
 

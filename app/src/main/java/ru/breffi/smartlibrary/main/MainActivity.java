@@ -1,6 +1,7 @@
 package ru.breffi.smartlibrary.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,14 +13,17 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import javax.inject.Inject;
+
 import dagger.android.AndroidInjection;
+import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.smartlibrary.content.ContentActivity;
 import ru.breffi.smartlibrary.feed.FeedFragment;
 import ru.breffi.smartlibrary.views.NonSwipeableViewPager;
+import ru.breffi.story.data.bridge.sync.SyncService;
 import ru.breffi.story.domain.models.PresentationEntity;
-
-import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
+        syncClmData();
 //        setScreenOrientation();
         setContentView(R.layout.activity_main);
         mainPresenter.initView(this);
@@ -60,6 +65,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
         }
         initViews();
         initViewPager();
+    }
+
+    private void syncClmData() {
+        Intent intent = new Intent(this, SyncService.class);
+        intent.putExtra(SyncService.APP_NAME, getString(R.string.app_name));
+        intent.putExtra(SyncService.VERSION_NAME, BuildConfig.VERSION_NAME);
+        startService(intent);
     }
 
     private void setScreenOrientation() {

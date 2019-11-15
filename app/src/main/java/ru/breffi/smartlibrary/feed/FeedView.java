@@ -1,8 +1,8 @@
 package ru.breffi.smartlibrary.feed;
 
-import ru.breffi.story.domain.models.PresentationEntity;
-
 import java.util.List;
+
+import ru.breffi.story.domain.models.PresentationEntity;
 
 public interface FeedView {
     void showPresentations(List<PresentationEntity> presentations);
@@ -24,4 +24,6 @@ public interface FeedView {
     void updatePresentation(List<PresentationEntity> presentationEntities, int position);
 
     void refreshPresentation(List<PresentationEntity> presentationEntities, int position);
+
+    void showPresentationError(String message);
 }

@@ -6,13 +6,15 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 import dagger.android.AndroidInjection;
 import ru.breffi.story.domain.interactors.PresentationContentInteractor;
 import ru.breffi.story.domain.interactors.PresentationInteractor;
 import ru.breffi.story.domain.models.PresentationEntity;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class ContentService extends Service {
 
@@ -58,5 +60,9 @@ public class ContentService extends Service {
 
     public List<PresentationEntity> getDownloadingPresentations() {
         return presentationContentInteractor.getDownloadingPresentations();
+    }
+
+    public List<PresentationEntity> getPresentationsQueue() {
+        return presentationContentInteractor.getPresentationsQueue();
     }
 }

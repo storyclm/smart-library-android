@@ -21,15 +21,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import dagger.android.support.AndroidSupportInjection;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.smartlibrary.content.ContentActivity;
 import ru.breffi.smartlibrary.feed.menu.PresentationMenuFragment;
 import ru.breffi.story.domain.models.PresentationEntity;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FeedFragment extends Fragment implements FeedView,
         PresentationClickListener,
@@ -252,6 +255,11 @@ public class FeedFragment extends Fragment implements FeedView,
     public void refreshPresentation(List<PresentationEntity> presentationEntities, int position) {
 //        adapter.setData(presentationEntities);
         adapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void showPresentationError(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

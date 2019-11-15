@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,14 +74,18 @@ public class FeedPresenter {
                 .doOnNext(presentationEntities -> this.presentationEntities = presentationEntities)
                 .doOnSubscribe((o) -> view.showProgress())
                 .doOnTerminate(() -> view.hideProgress())
-                .subscribe(presentations -> view.showPresentations(presentations), this::handleError));
+                .subscribe(pres -> view.showPresentations(pres), this::handleError));
 //        }
     }
 
     void retrievePresentation(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
         progressUpdateListeners.put(presentationEntity, progressUpdateListener);
         if (!presentationEntity.getWithContent()) {
-            view.showDownloadDialog(presentationEntity, progressUpdateListener);
+            if (presentationEntity.getSourceFolderEntity() != null) {
+                view.showDownloadDialog(presentationEntity, progressUpdateListener);
+            } else {
+                view.showPresentationError(context.getString(R.string.pres_folder_error));
+            }
         } else {
             openPresentation(presentationEntity);
         }
@@ -129,6 +134,7 @@ public class FeedPresenter {
         if (presentationEntity.getWithContent() && !isPresentationClicked) {
             isPresentationClicked = true;
             presentationEntity.setRead(true);
+            presentationEntity.setLastOpenDate(new Date());
             view.showPresentation(presentationEntity);
             presentationInteractor.updatePresentation(presentationEntity);
         }
@@ -145,19 +151,11 @@ public class FeedPresenter {
             progress += progressEntity.getProgress();
         }
         ProgressUpdateListener presentationViewHolder = progressUpdateListeners.get(downloadEntity.getEntity());
-//        Log.e("presentationViewHolder", presentationViewHolder.toString());
         PresentationEntity presentationEntity = findPresentationById(downloadEntity.getEntity().getId());
         presentationEntity.setTotalProgress(100);
         int currentProgress = calculateProgress(total, progress);
         presentationEntity.setCurrentProgress(currentProgress);
-
-//        if (loadingDisposables.get(presentationEntity) != null) {
         view.showContentLoadingProgress(100, currentProgress, presentationViewHolder, presentationEntities.indexOf(downloadEntity.getEntity()));
-//        }else {
-//            presentationEntity.setTotalProgress(0);
-//            presentationEntity.setCurrentProgress(0);
-//            view.refreshPresentation(presentationEntities, presentationEntities.indexOf(downloadEntity.getEntity()));
-//        }
     }
 
     private int calculateProgress(long total, long progress) {
@@ -254,6 +252,7 @@ public class FeedPresenter {
     public void restoreDownloadingProcess(RecyclerView recyclerView, PresentationAdapter adapter, RecyclerView.LayoutManager layoutManager) {
         if (isContentServiceValid()) {
             List<PresentationEntity> downloadingPresentations = contentService.getDownloadingPresentations();
+            List<PresentationEntity> presentationsQueue = contentService.getPresentationsQueue();
             Log.e("restore test", "downloadingPresentations = " + downloadingPresentations.size());
             for (PresentationEntity presentationEntity : downloadingPresentations) {
                 int presentationPosition = presentationEntities.indexOf(presentationEntity);
@@ -269,6 +268,13 @@ public class FeedPresenter {
 //                    }
 //                }
                 progressUpdateListeners.put(presentationEntity, progressUpdateListener);
+            }
+            for (PresentationEntity presentationEntity : presentationsQueue) {
+                int presentationPosition = presentationEntities.indexOf(presentationEntity);
+                presentationEntities.set(presentationPosition, presentationEntity);
+                ProgressUpdateListener progressUpdateListener = (ProgressUpdateListener) recyclerView.findViewHolderForItemId(presentationEntity.getId());
+                progressUpdateListeners.put(presentationEntity, progressUpdateListener);
+                view.showContentLoadingProgress(100, 2, progressUpdateListener, presentationPosition);
             }
             listenContentLoading();
             listenDownloadFinish();
@@ -308,13 +314,13 @@ public class FeedPresenter {
     public void stopPresentationLoading(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
         if (isContentServiceValid()) {
             Disposable disposable = loadingDisposables.get(presentationEntity);
-            compositeDisposable.add(contentService.presentationContentInteractor.stopPresentationContentLoading(presentationEntity)
-                    .subscribe(changablePres -> {
-                    }, this::handleError));
             if (disposable != null) {
                 disposable.dispose();
 //                loadingDisposables.remove(presentationEntity);
             }
+            compositeDisposable.add(contentService.presentationContentInteractor.stopPresentationContentLoading(presentationEntity)
+                    .subscribe(changablePres -> {
+                    }, this::handleError));
         }
     }
 }

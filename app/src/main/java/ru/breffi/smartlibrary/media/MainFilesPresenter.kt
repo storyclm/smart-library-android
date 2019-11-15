@@ -13,9 +13,9 @@ class MainFilesPresenter @Inject constructor(var presentationInteractor : Presen
     fun retrieveMediaFiles(presentationId : Int){
         presentationInteractor.getPresentation(presentationId)
             .subscribe(
-                { presentation ->
-                    if (presentation.isPresent) {
-                        handleMediaFiles(presentation.get())
+                {presentationOptional ->
+                    if (presentationOptional.isPresent) {
+                        handleMediaFiles(presentationOptional.get())
                     }
                 },
                 { t: Throwable -> t.printStackTrace() }

@@ -137,24 +137,26 @@ public class ContentFragment extends Fragment implements ContentView,
 
     @Override
     public void onDestroyView() {
-//        storyBridge.dispose();
+        storyBridge.dispose();
         super.onDestroyView();
     }
 
     private void initBridge() {
-        storyBridge = StoryBridgeFactory.create(mWebView,
-                presentationEntity,
-                this,
-                this,
-                this,
-                this,
-                this,
-                this,
-                this,
-                getContext(),
-                getString(R.string.app_name),
-                BuildConfig.VERSION_NAME,
-                this);
+        storyBridge = StoryBridgeFactory
+                .create(mWebView,
+                        presentationEntity,
+                        this,
+                        this,
+                        this,
+                        this,
+                        this,
+                        this,
+                        this,
+                        getContext(),
+                        getString(R.string.app_name),
+                        BuildConfig.VERSION_NAME,
+                        this
+                );
         storyBridge.addModule(new TestBridgeModule(), Collections.singletonList(TestBridgeModule.COMMAND));
         storyBridge.init();
     }
@@ -180,7 +182,6 @@ public class ContentFragment extends Fragment implements ContentView,
     @Override
     public void onPause() {
         super.onPause();
-
 
     }
 
@@ -425,12 +426,12 @@ public class ContentFragment extends Fragment implements ContentView,
                     = new AlertDialog.Builder(getContext());
             builder.setTitle(R.string.finish_session)
                     .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
-                        storyBridge.completeSession(Session.State.USER_NOS_SAVE);
+//                        storyBridge.completeSession(Session.State.USER_NOS_SAVE);
                         dialog.dismiss();
-                        isFinishedSession = true;
-                        if (getActivity() != null) {
-                            getActivity().onBackPressed();
-                        }
+//                        isFinishedSession = true;
+//                        if (getActivity() != null) {
+//                            getActivity().onBackPressed();
+//                        }
                     })
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         storyBridge.completeSession(Session.State.COMPLETED);
