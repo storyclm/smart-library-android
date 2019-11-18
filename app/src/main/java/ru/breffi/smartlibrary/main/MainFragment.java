@@ -1,31 +1,30 @@
 package ru.breffi.smartlibrary.main;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
-import ru.breffi.smartlibrary.content.ContentActivity;
 import ru.breffi.smartlibrary.feed.FeedFragment;
 import ru.breffi.smartlibrary.views.NonSwipeableViewPager;
 import ru.breffi.story.data.bridge.sync.SyncService;
-import ru.breffi.story.domain.models.PresentationEntity;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainFragment extends Fragment implements MainView {
 
     @Inject
     MainPresenter mainPresenter;
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private Fragment catalogFragment;
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (viewPager != null) {
             outState.putInt(CURRENT_ITEM, viewPager.getCurrentItem());
@@ -48,14 +47,23 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        AndroidSupportInjection.inject(this);
         super.onCreate(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_main, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         syncClmData();
-//        setScreenOrientation();
-        setContentView(R.layout.activity_main);
         mainPresenter.initView(this);
-        mainPresenter.initDefaultStoryClmUser(this);
+        mainPresenter.initDefaultStoryClmUser(requireContext());
         if (savedInstanceState == null) {
 //            FeedFragment feedFragment = FeedFragment.newInstance();
 //            getSupportFragmentManager().beginTransaction()
@@ -63,31 +71,21 @@ public class MainActivity extends AppCompatActivity implements MainView {
 //                    .commit();
 
         }
-        initViews();
+        initViews(view);
         initViewPager();
     }
 
+
     private void syncClmData() {
-        Intent intent = new Intent(this, SyncService.class);
+        Intent intent = new Intent(requireContext(), SyncService.class);
         intent.putExtra(SyncService.APP_NAME, getString(R.string.app_name));
         intent.putExtra(SyncService.VERSION_NAME, BuildConfig.VERSION_NAME);
-        startService(intent);
+        requireActivity().startService(intent);
     }
 
-    private void setScreenOrientation() {
-        if (!getResources().getBoolean(R.bool.isTablet)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-    }
-
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(name, context, attrs);
-    }
-
-    private void initViews() {
-        tabLayout = findViewById(R.id.tabs);
-        viewPager = findViewById(R.id.pager);
+    private void initViews(@NonNull View view) {
+        tabLayout = view.findViewById(R.id.tabs);
+        viewPager = view.findViewById(R.id.pager);
         if (mCurrentPage != -1 && viewPager != null) {
             viewPager.post(() -> {
                 if (viewPager != null) {
@@ -116,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     private void initViewPager() {
-        fragmentAdapter = new FragmentPagerAdapter(getSupportFragmentManager());
+        fragmentAdapter = new FragmentPagerAdapter(getChildFragmentManager());
         feedFragment = FeedFragment.newInstance();
         catalogFragment = new Fragment();
         fragmentAdapter.add(getString(R.string.feed_tab), feedFragment);
@@ -139,14 +137,5 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 });
             }
         }
-    }
-
-    public void showPresentation(PresentationEntity presentationEntity) {
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.fragmentContainer, ContentFragment.newInstance(getFilesDir() + "/storyCLM/" + presentationId + "/index.html"), ContentFragment.TAG)
-//                .addToBackStack(ContentFragment.TAG)
-//                .commit();
-        startActivity(ContentActivity.getIntent(this, presentationEntity));
     }
 }

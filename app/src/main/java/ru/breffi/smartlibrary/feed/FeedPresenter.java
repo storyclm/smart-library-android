@@ -1,11 +1,11 @@
 package ru.breffi.smartlibrary.feed;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,9 +28,6 @@ import ru.breffi.story.domain.models.DownloadEntity;
 import ru.breffi.story.domain.models.PresentationEntity;
 import ru.breffi.story.domain.models.ProgressEntity;
 
-import static android.app.Activity.RESULT_OK;
-import static ru.breffi.smartlibrary.content.ContentActivity.PRESENTATION;
-
 public class FeedPresenter {
 
     private final Context context;
@@ -46,7 +43,6 @@ public class FeedPresenter {
     private ContentService contentService;
     private boolean bound;
     private Disposable downloadFinishObservable;
-    public boolean isPresentationClicked = false;
     private Map<PresentationEntity, Disposable> loadingDisposables = new HashMap<>();
 
     @Inject
@@ -131,12 +127,13 @@ public class FeedPresenter {
     }
 
     private void openPresentation(PresentationEntity presentationEntity) {
-        if (presentationEntity.getWithContent() && !isPresentationClicked) {
-            isPresentationClicked = true;
+        if (presentationEntity.getWithContent()) {
             presentationEntity.setRead(true);
             presentationEntity.setLastOpenDate(new Date());
             view.showPresentation(presentationEntity);
             presentationInteractor.updatePresentation(presentationEntity);
+
+            view.refreshPresentation(presentationEntities, presentationEntities.indexOf(presentationEntity));
         }
     }
 
@@ -301,14 +298,6 @@ public class FeedPresenter {
 //        compositeDisposable.dispose();
         progressUpdateListeners.clear();
         presentationEntities.clear();
-    }
-
-    public void updatePresentationAfterViewing(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            PresentationEntity presentationEntity = (PresentationEntity) data.getSerializableExtra(PRESENTATION);
-            view.refreshPresentation(presentationEntities, presentationEntities.indexOf(presentationEntity));
-            isPresentationClicked = false;
-        }
     }
 
     public void stopPresentationLoading(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {

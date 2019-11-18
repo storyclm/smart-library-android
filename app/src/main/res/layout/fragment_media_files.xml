@@ -1,15 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".media.FilesFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/media_background">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mediaRecyclerView"
+    <!--<com.github.mmin18.widget.RealtimeBlurView-->
+            <!--android:id="@+id/blur_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--app:realtimeBlurRadius="10dp"/>-->
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <RelativeLayout
+                android:id="@+id/toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:contentInsetEnd="@dimen/toolbar_inset"
+                app:contentInsetStart="@dimen/toolbar_inset">
 
-</FrameLayout>
+            <ImageView
+                    android:id="@+id/backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_back_phone"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"/>
+        </RelativeLayout>
+
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                app:tabTextAppearance="@style/MiniCustomTabText"
+                app:tabIndicatorColor="@color/white"
+                app:tabSelectedTextColor="@android:color/white"
+                app:tabTextColor="@color/disable_tab_text"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar_layout"/>
+
+</RelativeLayout>

@@ -30,8 +30,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.android.support.AndroidSupportInjection;
+import ru.breffi.clm.ui.library.host.Navigation;
 import ru.breffi.smartlibrary.R;
-import ru.breffi.smartlibrary.content.ContentActivity;
 import ru.breffi.smartlibrary.feed.menu.PresentationMenuFragment;
 import ru.breffi.story.domain.models.PresentationEntity;
 
@@ -196,25 +196,19 @@ public class FeedFragment extends Fragment implements FeedView,
 
     @Override
     public void showPresentation(PresentationEntity presentationEntity) {
-        if (getActivity() != null) {
-            startActivityForResult(ContentActivity.getIntent(getActivity(), presentationEntity), ContentActivity.REQUEST_CODE);
+        if (getActivity() instanceof Navigation) {
+            ((Navigation) getActivity()).showContent(presentationEntity);
         }
     }
 
     @Override
     public void showDownloadDialog(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
-        AlertDialog.Builder builder
-                = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.download_dialog)
                 .setMessage(String.format(getString(R.string.download_message), (double) presentationEntity.getSourceFolderEntity().getFileSize() / 1024 / 1024))
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
-                    feedPresenter.isPresentationClicked = false;
-                    dialog.dismiss();
-                })
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
                     feedPresenter.loadPresentation(presentationEntity, progressUpdateListener);
-                    feedPresenter.isPresentationClicked = false;
-                    dialog.dismiss();
                 })
                 .show();
     }
@@ -300,16 +294,6 @@ public class FeedFragment extends Fragment implements FeedView,
             getActivity().unbindService(serviceConnection);
             feedPresenter.unbindContentService(serviceConnection);
             feedPresenter.setBound(false);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case ContentActivity.REQUEST_CODE:
-                feedPresenter.updatePresentationAfterViewing(requestCode, resultCode, data);
-                break;
         }
     }
 

@@ -14,7 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.AndroidSupportInjection
 import ru.breffi.smartlibrary.R
 import ru.breffi.smartlibrary.feed.ProgressUpdateListener
-import ru.breffi.smartlibrary.media.MediaFilesActivity.Companion.EMPTY_ID
+import ru.breffi.smartlibrary.media.MediaFilesFragment.Companion.EMPTY_ID
+
 import ru.breffi.story.domain.models.MediaFileEntity
 import java.io.File
 import javax.inject.Inject
@@ -48,7 +49,7 @@ class FilesFragment : Fragment(), FilesView, MediaClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        fragmentView = inflater.inflate(R.layout.fragment_media_files, container, false)
+        fragmentView = inflater.inflate(R.layout.fragment_files, container, false)
         filesPresenter.initView(this)
         initViews()
         arguments?.let {
