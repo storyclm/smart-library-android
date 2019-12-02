@@ -40,7 +40,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import ru.breffi.clm.ui.library.host.BackConsumer;
+import ru.breffi.smartlibrary.host.BackConsumer;
 import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.PresentationCache;
 import ru.breffi.smartlibrary.R;

@@ -1,4 +1,4 @@
-package ru.breffi.clm.ui.library.host
+package ru.breffi.smartlibrary.host
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import dagger.android.AndroidInjection
+import ru.breffi.clm.ui.library.host.Navigation
 import ru.breffi.smartlibrary.PresentationCache
 import ru.breffi.smartlibrary.R
 import ru.breffi.smartlibrary.content.ContentFragment

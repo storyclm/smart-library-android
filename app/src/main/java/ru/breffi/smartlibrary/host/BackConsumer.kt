@@ -1,4 +1,4 @@
-package ru.breffi.clm.ui.library.host
+package ru.breffi.smartlibrary.host
 
 interface BackConsumer {
 

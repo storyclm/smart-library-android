@@ -2,7 +2,7 @@ package ru.breffi.smartlibrary.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
-import ru.breffi.clm.ui.library.host.HostActivity;
+import ru.breffi.smartlibrary.host.HostActivity;
 import ru.breffi.smartlibrary.feed.FeedFragment;
 import ru.breffi.smartlibrary.loading.LoadingFragment;
 import ru.breffi.smartlibrary.main.MainFragment;

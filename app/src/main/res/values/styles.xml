@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="SplashActivityStyle" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
     <style name="TransparentCompat" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
