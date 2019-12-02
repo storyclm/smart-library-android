@@ -119,26 +119,13 @@ public class PresentationViewHolder extends RecyclerView.ViewHolder implements P
     }
 
     private void initButtons(PresentationEntity presentation) {
-        if (!presentation.getWithContent()) {
-            downloadTextView.setVisibility(View.VISIBLE);
-//            infoImageView.setVisibility(View.INVISIBLE);
-        } else {
-            downloadTextView.setVisibility(View.INVISIBLE);
-//            infoImageView.setVisibility(View.VISIBLE);
-        }
-
-        if (!presentation.getNeedUpdate()) {
-            updateTextView.setVisibility(View.INVISIBLE);
-        } else {
-            updateTextView.setVisibility(View.VISIBLE);
-        }
+        downloadTextView.setVisibility(View.INVISIBLE);
+        updateTextView.setVisibility(View.INVISIBLE);
 
         if (presentation.isRead()) {
             newTextView.setVisibility(View.INVISIBLE);
-//            infoImageView.setVisibility(View.VISIBLE);
         } else {
             newTextView.setVisibility(View.VISIBLE);
-//            infoImageView.setVisibility(View.INVISIBLE);
         }
 
         if (presentation.isRead() && presentation.getWithContent()) {

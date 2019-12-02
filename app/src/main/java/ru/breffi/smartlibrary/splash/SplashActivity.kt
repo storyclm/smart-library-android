@@ -8,10 +8,18 @@ import ru.breffi.smartlibrary.host.HostActivity
 
 class SplashActivity : Activity() {
 
-    val handler = Handler()
+    private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Fixing https://stackoverflow.com/questions/19545889/app-restarts-rather-than-resumes/23220151
+        if (!isTaskRoot
+            && intent?.hasCategory(Intent.CATEGORY_LAUNCHER) == true
+            && intent.action?.equals(Intent.ACTION_MAIN) == true
+        ) {
+            finish()
+            return
+        }
 
         handler.postDelayed(
             {

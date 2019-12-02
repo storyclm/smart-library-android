@@ -26,4 +26,6 @@ public interface FeedView {
     void refreshPresentation(List<PresentationEntity> presentationEntities, int position);
 
     void showPresentationError(String message);
+
+    void launchLoading(List<PresentationEntity> presentationsToLoad);
 }

@@ -1,6 +1,11 @@
 package ru.breffi.smartlibrary.di;
 
 
+import android.content.Context;
+
+import com.coolerfall.download.DownloadManager;
+import com.coolerfall.download.OkHttpDownloader;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -23,5 +28,15 @@ public class DataModule {
     @Singleton
     public AuthRetrofitService provideAuthRetrofitService() {
         return Communicator.getAuthRetrofitService(BuildConfig.CLM_AUTH);
+    }
+
+    @Provides
+    @Singleton
+    public DownloadManager provideDownloadManager(Context context) {
+        return new DownloadManager.Builder()
+                .context(context)
+                .downloader(OkHttpDownloader.create())
+                .threadPoolSize(1)
+                .build();
     }
 }

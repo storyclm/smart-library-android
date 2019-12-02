@@ -1,11 +1,12 @@
 package ru.breffi.smartlibrary.feed;
 
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,10 +19,12 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.story.data.network.NetworkUtil;
 import ru.breffi.story.domain.interactors.AccountInteractor;
+import ru.breffi.story.domain.interactors.PresentationContentInteractor;
 import ru.breffi.story.domain.interactors.PresentationInteractor;
 import ru.breffi.story.domain.models.AccountEntity;
 import ru.breffi.story.domain.models.DownloadEntity;
@@ -34,29 +37,41 @@ public class FeedPresenter {
     private FeedView view;
     private AccountInteractor accountInteractor;
     private PresentationInteractor presentationInteractor;
+    private PresentationContentInteractor presentationContentInteractor;
     private AccountEntity account;
     private CompositeDisposable compositeDisposable;
     private HashMap<PresentationEntity, ProgressUpdateListener> progressUpdateListeners = new HashMap<>();
     private List<PresentationEntity> presentationEntities = new ArrayList<>();
     private PresentationEntity changablePresentation;
     private ProgressUpdateListener changableProgressUpdateListener;
-    private ContentService contentService;
-    private boolean bound;
     private Disposable downloadFinishObservable;
     private Map<PresentationEntity, Disposable> loadingDisposables = new HashMap<>();
 
     @Inject
     public FeedPresenter(PresentationInteractor presentationInteractor,
                          AccountInteractor accountInteractor,
-                         Context context) {
+                         Context context,
+                         PresentationContentInteractor presentationContentInteractor) {
         this.presentationInteractor = presentationInteractor;
         this.accountInteractor = accountInteractor;
         this.context = context;
+        this.presentationContentInteractor = presentationContentInteractor;
         compositeDisposable = new CompositeDisposable();
     }
 
     public void initView(FeedView view) {
         this.view = view;
+
+        Disposable disposable = presentationContentInteractor.observeContentUpdated()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        presentations -> {
+                            getPresentations(true);
+                        },
+                        this::handleError
+                );
+        compositeDisposable.add(disposable);
     }
 
     public void getPresentations(boolean loadFromServer) {
@@ -70,7 +85,16 @@ public class FeedPresenter {
                 .doOnNext(presentationEntities -> this.presentationEntities = presentationEntities)
                 .doOnSubscribe((o) -> view.showProgress())
                 .doOnTerminate(() -> view.hideProgress())
-                .subscribe(pres -> view.showPresentations(pres), this::handleError));
+                .subscribe(presentations -> {
+                    List<PresentationEntity> requiredPresentations = Stream.of(presentations)
+                            .filter(value -> value.getNeedUpdate() || !value.getWithContent())
+                            .toList();
+                    if (requiredPresentations.isEmpty()) {
+                        view.showPresentations(presentations);
+                    } else {
+                        view.launchLoading(requiredPresentations);
+                    }
+                }, this::handleError));
 //        }
     }
 
@@ -88,9 +112,9 @@ public class FeedPresenter {
     }
 
     void loadPresentation(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
-        if (isContentServiceValid() && NetworkUtil.getInstance().isConnected(context)) {
+        if (NetworkUtil.getInstance().isConnected(context)) {
             progressUpdateListeners.put(presentationEntity, progressUpdateListener);
-            Disposable disposable = contentService.presentationContentInteractor.getPresentationContent(presentationEntity, BuildConfig.WITH_FULL_CONTENT)
+            Disposable disposable = presentationContentInteractor.getPresentationContent(presentationEntity, BuildConfig.WITH_FULL_CONTENT)
                     .subscribe(loaded -> {
                     }, this::handleError);
             compositeDisposable.add(disposable);
@@ -100,6 +124,7 @@ public class FeedPresenter {
         }
     }
 
+
     private void handleError(Throwable throwable) {
         Log.e("getPresentations", " handleError");
         throwable.printStackTrace();
@@ -107,16 +132,14 @@ public class FeedPresenter {
     }
 
     void listenContentLoading() {
-        if (isContentServiceValid()) {
-            compositeDisposable.add(contentService.presentationContentInteractor.listenContentLoading()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::showCurrentProgress, Throwable::printStackTrace));
-        }
+        compositeDisposable.add(presentationContentInteractor.listenContentLoading()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::showCurrentProgress, Throwable::printStackTrace));
     }
 
     void listenDownloadFinish() {
-        if (isContentServiceValid() && downloadFinishObservable == null || downloadFinishObservable.isDisposed()) {
-            downloadFinishObservable = contentService.presentationContentInteractor.listenDownloadFinish()
+        if (downloadFinishObservable == null || downloadFinishObservable.isDisposed()) {
+            downloadFinishObservable = presentationContentInteractor.listenDownloadFinish()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(presentationEntity -> {
                         Log.e("listenDownloadFinish", " presentation = " + presentationEntity.getName());
@@ -170,28 +193,26 @@ public class FeedPresenter {
     }
 
     public void deletePresentationContent(int presentationId) {
-        if (isContentServiceValid()) {
-            PresentationEntity presForDelete = findPresentationById(presentationId);
-            compositeDisposable.add(contentService.presentationContentInteractor.removePresentationContent(presForDelete)
-                    .doOnSubscribe((o) -> {
-                        if (presForDelete != null) {
-                            presForDelete.setNowDeleting(true);
-                            view.refreshPresentation(presentationEntities, presentationEntities.indexOf(presForDelete));
-                        }
-                    })
-                    .subscribe(deletablePresentation -> {
-                        deletablePresentation.setNowDeleting(false);
-                        view.updatePresentation(presentationEntities, presentationEntities.indexOf(deletablePresentation));
-                        Log.e("deletePresentation", " deletablePresentation = " + deletablePresentation.getName() + " withContent = " + deletablePresentation.getWithContent());
-                    }, this::handleError));
-        }
+        PresentationEntity presForDelete = findPresentationById(presentationId);
+        compositeDisposable.add(presentationContentInteractor.removePresentationContent(presForDelete)
+                .doOnSubscribe((o) -> {
+                    if (presForDelete != null) {
+                        presForDelete.setNowDeleting(true);
+                        view.refreshPresentation(presentationEntities, presentationEntities.indexOf(presForDelete));
+                    }
+                })
+                .subscribe(deletablePresentation -> {
+                    deletablePresentation.setNowDeleting(false);
+                    view.updatePresentation(presentationEntities, presentationEntities.indexOf(deletablePresentation));
+                    Log.e("deletePresentation", " deletablePresentation = " + deletablePresentation.getName() + " withContent = " + deletablePresentation.getWithContent());
+                }, this::handleError));
     }
 
     public void updatePresentationContent(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
-        if (isContentServiceValid() && NetworkUtil.getInstance().isConnected(context)) {
+        if (NetworkUtil.getInstance().isConnected(context)) {
             progressUpdateListeners.put(getChangablePresentation(), progressUpdateListener);
             getChangablePresentation().setNowUpdating(true);
-            Disposable disposable = contentService.presentationContentInteractor.updatePresentationContent(getChangablePresentation(), BuildConfig.WITH_FULL_CONTENT)
+            Disposable disposable = presentationContentInteractor.updatePresentationContent(getChangablePresentation(), BuildConfig.WITH_FULL_CONTENT)
                     .doOnSubscribe((o) -> {
                         if (getChangablePresentation() != null) {
                             Log.e("update pres", getChangablePresentation().toString());
@@ -242,20 +263,15 @@ public class FeedPresenter {
         view.showUpdateDialog(getChangablePresentation(), getChangableProgressUpdateListener());
     }
 
-    public void bindContentService(ContentService contentService) {
-        this.contentService = contentService;
-    }
-
     public void restoreDownloadingProcess(RecyclerView recyclerView, PresentationAdapter adapter, RecyclerView.LayoutManager layoutManager) {
-        if (isContentServiceValid()) {
-            List<PresentationEntity> downloadingPresentations = contentService.getDownloadingPresentations();
-            List<PresentationEntity> presentationsQueue = contentService.getPresentationsQueue();
-            Log.e("restore test", "downloadingPresentations = " + downloadingPresentations.size());
-            for (PresentationEntity presentationEntity : downloadingPresentations) {
-                int presentationPosition = presentationEntities.indexOf(presentationEntity);
-                Log.e("restore test", "presentationPosition = " + presentationPosition);
-                presentationEntities.set(presentationPosition, presentationEntity);
-                ProgressUpdateListener progressUpdateListener = (ProgressUpdateListener) recyclerView.findViewHolderForItemId(presentationEntity.getId());
+        List<PresentationEntity> downloadingPresentations = presentationContentInteractor.getDownloadingPresentations();
+        List<PresentationEntity> presentationsQueue = presentationContentInteractor.getPresentationsQueue();
+        Log.e("restore test", "downloadingPresentations = " + downloadingPresentations.size());
+        for (PresentationEntity presentationEntity : downloadingPresentations) {
+            int presentationPosition = presentationEntities.indexOf(presentationEntity);
+            Log.e("restore test", "presentationPosition = " + presentationPosition);
+            presentationEntities.set(presentationPosition, presentationEntity);
+            ProgressUpdateListener progressUpdateListener = (ProgressUpdateListener) recyclerView.findViewHolderForItemId(presentationEntity.getId());
 //                ProgressUpdateListener progressUpdateListener = null;
 //                for(PresentationViewHolder viewHolder : adapter.getViewHolders()){
 //                    if(viewHolder.presentation.getId() == presentationEntity.getId()){
@@ -264,34 +280,17 @@ public class FeedPresenter {
 //                        break;
 //                    }
 //                }
-                progressUpdateListeners.put(presentationEntity, progressUpdateListener);
-            }
-            for (PresentationEntity presentationEntity : presentationsQueue) {
-                int presentationPosition = presentationEntities.indexOf(presentationEntity);
-                presentationEntities.set(presentationPosition, presentationEntity);
-                ProgressUpdateListener progressUpdateListener = (ProgressUpdateListener) recyclerView.findViewHolderForItemId(presentationEntity.getId());
-                progressUpdateListeners.put(presentationEntity, progressUpdateListener);
-                view.showContentLoadingProgress(100, 2, progressUpdateListener, presentationPosition);
-            }
-            listenContentLoading();
-            listenDownloadFinish();
+            progressUpdateListeners.put(presentationEntity, progressUpdateListener);
         }
-    }
-
-    public void unbindContentService(ServiceConnection contentService) {
-
-    }
-
-    public void setBound(boolean bound) {
-        this.bound = bound;
-    }
-
-    public boolean isBound() {
-        return bound;
-    }
-
-    private boolean isContentServiceValid() {
-        return isBound() && contentService != null;
+        for (PresentationEntity presentationEntity : presentationsQueue) {
+            int presentationPosition = presentationEntities.indexOf(presentationEntity);
+            presentationEntities.set(presentationPosition, presentationEntity);
+            ProgressUpdateListener progressUpdateListener = (ProgressUpdateListener) recyclerView.findViewHolderForItemId(presentationEntity.getId());
+            progressUpdateListeners.put(presentationEntity, progressUpdateListener);
+            view.showContentLoadingProgress(100, 2, progressUpdateListener, presentationPosition);
+        }
+        listenContentLoading();
+        listenDownloadFinish();
     }
 
     public void destroy() {
@@ -301,15 +300,18 @@ public class FeedPresenter {
     }
 
     public void stopPresentationLoading(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
-        if (isContentServiceValid()) {
-            Disposable disposable = loadingDisposables.get(presentationEntity);
-            if (disposable != null) {
-                disposable.dispose();
+        Disposable disposable = loadingDisposables.get(presentationEntity);
+        if (disposable != null) {
+            disposable.dispose();
 //                loadingDisposables.remove(presentationEntity);
-            }
-            compositeDisposable.add(contentService.presentationContentInteractor.stopPresentationContentLoading(presentationEntity)
-                    .subscribe(changablePres -> {
-                    }, this::handleError));
         }
+        compositeDisposable.add(presentationContentInteractor.stopPresentationContentLoading(presentationEntity)
+                .subscribe(changablePres -> {
+                }, this::handleError));
+    }
+
+    private interface RequiredContentCheckCallback {
+
+        void onDownloadRequired(List<PresentationEntity> presentations);
     }
 }

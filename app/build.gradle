@@ -93,6 +93,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.airbnb.android:lottie:3.2.2'
 
 
     //Dagger 2 - DI library
@@ -127,7 +128,7 @@ dependencies {
     //View for tree showing
     implementation 'de.blox:graphview:0.6.0'
 
-    implementation('ru.breffi.story:storycontent:0.5.0@aar') {
+    implementation('ru.breffi.story:storycontent:0.6.0@aar') {
         transitive=true
     }
 
