@@ -6,7 +6,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import ru.breffi.clm.ui.loading.LoadingView
 import ru.breffi.smartlibrary.BuildConfig
 import ru.breffi.smartlibrary.R
 import ru.breffi.story.data.network.NetworkUtil

@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_loading.*
-import ru.breffi.clm.ui.library.host.BackConsumer
-import ru.breffi.clm.ui.loading.LoadingView
 import ru.breffi.smartlibrary.R
+import ru.breffi.smartlibrary.host.BackConsumer
 import ru.breffi.smartlibrary.host.Navigation
 import javax.inject.Inject
 

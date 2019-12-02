@@ -1,17 +1,14 @@
 package ru.breffi.smartlibrary.host
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import dagger.android.AndroidInjection
-import ru.breffi.clm.ui.library.host.Navigation
 import ru.breffi.smartlibrary.PresentationCache
 import ru.breffi.smartlibrary.R
 import ru.breffi.smartlibrary.content.ContentFragment
-import ru.breffi.smartlibrary.host.Navigation
 import ru.breffi.smartlibrary.loading.LoadingFragment
 import ru.breffi.smartlibrary.main.MainFragment
 import ru.breffi.smartlibrary.media.MediaFilesFragment
@@ -25,14 +22,6 @@ class HostActivity : AppCompatActivity(), Navigation {
     val screenStack: Stack<Fragment> = Stack()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //Fixing https://stackoverflow.com/questions/19545889/app-restarts-rather-than-resumes/23220151
-        if (!isTaskRoot()
-            && intent?.hasCategory(Intent.CATEGORY_LAUNCHER) ?: false
-            && intent.getAction()?.equals(Intent.ACTION_MAIN) ?: false
-        ) {
-            finish()
-            return
-        }
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host)
@@ -76,6 +65,9 @@ class HostActivity : AppCompatActivity(), Navigation {
     private fun performBackNavigation() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
+            if (screenStack.isNotEmpty()) {
+                screenStack.pop()
+            }
         } else {
             super.onBackPressed()
         }

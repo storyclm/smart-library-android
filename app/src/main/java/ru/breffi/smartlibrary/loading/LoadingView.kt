@@ -1,4 +1,4 @@
-package ru.breffi.clm.ui.loading
+package ru.breffi.smartlibrary.loading
 
 interface LoadingView {
 

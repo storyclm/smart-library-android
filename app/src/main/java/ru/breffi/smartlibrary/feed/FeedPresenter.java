@@ -47,8 +47,6 @@ public class FeedPresenter {
     private Disposable downloadFinishObservable;
     private Map<PresentationEntity, Disposable> loadingDisposables = new HashMap<>();
 
-    private Runnable pendingContentAction = null;
-
     @Inject
     public FeedPresenter(PresentationInteractor presentationInteractor,
                          AccountInteractor accountInteractor,
@@ -69,10 +67,7 @@ public class FeedPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         presentations -> {
-                            if (pendingContentAction != null) {
-                                pendingContentAction.run();
-                                pendingContentAction = null;
-                            }
+                            getPresentations(true);
                         },
                         this::handleError
                 );
@@ -90,7 +85,16 @@ public class FeedPresenter {
                 .doOnNext(presentationEntities -> this.presentationEntities = presentationEntities)
                 .doOnSubscribe((o) -> view.showProgress())
                 .doOnTerminate(() -> view.hideProgress())
-                .subscribe(pres -> view.showPresentations(pres), this::handleError));
+                .subscribe(presentations -> {
+                    List<PresentationEntity> requiredPresentations = Stream.of(presentations)
+                            .filter(value -> value.getNeedUpdate() || !value.getWithContent())
+                            .toList();
+                    if (requiredPresentations.isEmpty()) {
+                        view.showPresentations(presentations);
+                    } else {
+                        view.launchLoading(requiredPresentations);
+                    }
+                }, this::handleError));
 //        }
     }
 
@@ -107,37 +111,14 @@ public class FeedPresenter {
         }
     }
 
-    private void checkRequiredContent(RequiredContentCheckCallback callback) {
-        Disposable disposable = presentationInteractor.getPresentations(false, null)
-                .subscribe(presentations -> {
-                            List<PresentationEntity> requiredPresentations = Stream.of(presentations)
-                                    .filter(value -> !value.isVisible() && (value.getNeedUpdate() || !value.getWithContent()))
-                                    .toList();
-                            callback.onDownloadRequired(requiredPresentations);
-                        },
-                        this::handleError
-                );
-        compositeDisposable.add(disposable);
-    }
-
     void loadPresentation(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
         if (NetworkUtil.getInstance().isConnected(context)) {
-            checkRequiredContent(presentations -> {
-                Runnable contentAction = () -> {
-                    progressUpdateListeners.put(presentationEntity, progressUpdateListener);
-                    Disposable disposable = presentationContentInteractor.getPresentationContent(presentationEntity, BuildConfig.WITH_FULL_CONTENT)
-                            .subscribe(loaded -> {
-                            }, this::handleError);
-                    compositeDisposable.add(disposable);
-                    loadingDisposables.put(presentationEntity, disposable);
-                };
-                if (presentations.isEmpty()) {
-                    contentAction.run();
-                } else {
-                    pendingContentAction = contentAction;
-                    view.launchLoading(presentations);
-                }
-            });
+            progressUpdateListeners.put(presentationEntity, progressUpdateListener);
+            Disposable disposable = presentationContentInteractor.getPresentationContent(presentationEntity, BuildConfig.WITH_FULL_CONTENT)
+                    .subscribe(loaded -> {
+                    }, this::handleError);
+            compositeDisposable.add(disposable);
+            loadingDisposables.put(presentationEntity, disposable);
         } else {
             Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
         }
@@ -229,34 +210,24 @@ public class FeedPresenter {
 
     public void updatePresentationContent(PresentationEntity presentationEntity, ProgressUpdateListener progressUpdateListener) {
         if (NetworkUtil.getInstance().isConnected(context)) {
-            checkRequiredContent(presentations -> {
-                Runnable contentAction = () -> {
-                    progressUpdateListeners.put(getChangablePresentation(), progressUpdateListener);
-                    getChangablePresentation().setNowUpdating(true);
-                    Disposable disposable = presentationContentInteractor.updatePresentationContent(getChangablePresentation(), BuildConfig.WITH_FULL_CONTENT)
-                            .doOnSubscribe((o) -> {
-                                if (getChangablePresentation() != null) {
-                                    Log.e("update pres", getChangablePresentation().toString());
-                                    view.refreshPresentation(presentationEntities, presentationEntities.indexOf(getChangablePresentation()));
-                                }
-                            })
+            progressUpdateListeners.put(getChangablePresentation(), progressUpdateListener);
+            getChangablePresentation().setNowUpdating(true);
+            Disposable disposable = presentationContentInteractor.updatePresentationContent(getChangablePresentation(), BuildConfig.WITH_FULL_CONTENT)
+                    .doOnSubscribe((o) -> {
+                        if (getChangablePresentation() != null) {
+                            Log.e("update pres", getChangablePresentation().toString());
+                            view.refreshPresentation(presentationEntities, presentationEntities.indexOf(getChangablePresentation()));
+                        }
+                    })
 //                    .doOnTerminate(() -> {
 //                        getChangablePresentation().setNowUpdating(false);
 //                        Log.e("update pres", getChangablePresentation().toString());
 //                        view.refreshPresentation(presentationEntities, presentationEntities.indexOf(getChangablePresentation()));
 //                    })
-                            .subscribe(changablePres -> {
-                            }, this::handleError);
-                    compositeDisposable.add(disposable);
-                    loadingDisposables.put(presentationEntity, disposable);
-                };
-                if (presentations.isEmpty()) {
-                    contentAction.run();
-                } else {
-                    pendingContentAction = contentAction;
-                    view.launchLoading(presentations);
-                }
-            });
+                    .subscribe(changablePres -> {
+                    }, this::handleError);
+            compositeDisposable.add(disposable);
+            loadingDisposables.put(presentationEntity, disposable);
         } else {
             Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
         }
