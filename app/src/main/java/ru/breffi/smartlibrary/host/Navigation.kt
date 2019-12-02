@@ -1,6 +1,7 @@
-package ru.breffi.clm.ui.library.host
+package ru.breffi.smartlibrary.host
 
 import ru.breffi.story.domain.models.PresentationEntity
+import java.util.*
 
 interface Navigation {
 
@@ -12,5 +13,7 @@ interface Navigation {
 
     fun showSlides(presentationId: Int)
 
-    fun back()
+    fun showLoading(presentationIds: ArrayList<Int>)
+
+    fun back(force: Boolean = false)
 }

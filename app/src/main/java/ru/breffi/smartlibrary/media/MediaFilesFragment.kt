@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_media_files.*
-import ru.breffi.clm.ui.library.host.Navigation
 import ru.breffi.smartlibrary.R
+import ru.breffi.smartlibrary.host.Navigation
 import ru.breffi.smartlibrary.main.FragmentPagerAdapter
 import ru.breffi.story.domain.models.MediaFileEntity
 import javax.inject.Inject

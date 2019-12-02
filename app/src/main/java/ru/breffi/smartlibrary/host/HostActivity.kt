@@ -10,6 +10,8 @@ import dagger.android.AndroidInjection
 import ru.breffi.smartlibrary.PresentationCache
 import ru.breffi.smartlibrary.R
 import ru.breffi.smartlibrary.content.ContentFragment
+import ru.breffi.smartlibrary.host.Navigation
+import ru.breffi.smartlibrary.loading.LoadingFragment
 import ru.breffi.smartlibrary.main.MainFragment
 import ru.breffi.smartlibrary.media.MediaFilesFragment
 import ru.breffi.smartlibrary.slides.SlidesTreeFragment
@@ -17,13 +19,9 @@ import ru.breffi.story.domain.models.PresentationEntity
 import java.util.*
 
 
-
-
 class HostActivity : AppCompatActivity(), Navigation {
 
     val screenStack: Stack<Fragment> = Stack()
-
-    var presentationToLaunch: PresentationEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //Fixing https://stackoverflow.com/questions/19545889/app-restarts-rather-than-resumes/23220151
@@ -43,11 +41,6 @@ class HostActivity : AppCompatActivity(), Navigation {
 
     override fun showMain() {
         setFragment(MainFragment())
-
-        presentationToLaunch?.let {
-            showContent(it)
-            presentationToLaunch = null
-        }
     }
 
     override fun showContent(presentationEntity: PresentationEntity) {
@@ -63,15 +56,27 @@ class HostActivity : AppCompatActivity(), Navigation {
         addFragment(SlidesTreeFragment.newInstance(presentationId), SlidesTreeFragment.TAG)
     }
 
-    override fun back() {
-        val currentFragment = getCurrentFragment()
-        val consumed = currentFragment is BackConsumer && currentFragment.onBackPressed()
-        if (!consumed) {
-            if (supportFragmentManager.backStackEntryCount > 0) {
-                supportFragmentManager.popBackStack()
-            } else {
-                super.onBackPressed()
+    override fun showLoading(presentationIds: ArrayList<Int>) {
+        addFragment(LoadingFragment.newInstance(presentationIds), LoadingFragment.TAG)
+    }
+
+    override fun back(force: Boolean) {
+        if (force) {
+            performBackNavigation()
+        } else {
+            val currentFragment = getCurrentFragment()
+            val consumed = currentFragment is BackConsumer && currentFragment.onBackPressed()
+            if (!consumed) {
+                performBackNavigation()
             }
+        }
+    }
+
+    private fun performBackNavigation() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
         }
     }
 

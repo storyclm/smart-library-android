@@ -41,10 +41,10 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.breffi.clm.ui.library.host.BackConsumer;
-import ru.breffi.clm.ui.library.host.Navigation;
 import ru.breffi.smartlibrary.BuildConfig;
 import ru.breffi.smartlibrary.PresentationCache;
 import ru.breffi.smartlibrary.R;
+import ru.breffi.smartlibrary.host.Navigation;
 import ru.breffi.story.data.bridge.StoryBridge;
 import ru.breffi.story.data.bridge.StoryBridgeFactory;
 import ru.breffi.story.data.bridge.StoryBridgeListener;
@@ -411,7 +411,7 @@ public class ContentFragment extends Fragment implements ContentView,
 
     private void close() {
         if (getActivity() instanceof Navigation) {
-            ((Navigation) getActivity()).back();
+            ((Navigation) getActivity()).back(false);
         }
     }
 

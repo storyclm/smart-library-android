@@ -24,4 +24,9 @@
 
     <color name="graph_item_background">#36000000</color>
 
+    <color name="text_color_grey">#7f030303</color>
+    <color name="text_color_grey_disabled">#1f030303</color>
+
+    <color name="ripple">#747474</color>
+
 </resources>

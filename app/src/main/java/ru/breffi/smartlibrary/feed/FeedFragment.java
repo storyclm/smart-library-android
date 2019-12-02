@@ -1,12 +1,7 @@
 package ru.breffi.smartlibrary.feed;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,15 +19,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.annimon.stream.Stream;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.android.support.AndroidSupportInjection;
-import ru.breffi.clm.ui.library.host.Navigation;
 import ru.breffi.smartlibrary.R;
 import ru.breffi.smartlibrary.feed.menu.PresentationMenuFragment;
+import ru.breffi.smartlibrary.host.Navigation;
 import ru.breffi.story.domain.models.PresentationEntity;
 
 public class FeedFragment extends Fragment implements FeedView,
@@ -164,7 +161,7 @@ public class FeedFragment extends Fragment implements FeedView,
 
     @Override
     public void showPresentations(List<PresentationEntity> presentations) {
-        adapter.setData(presentations);
+        setAdapterData(presentations);
         adapter.notifyDataSetChanged();
         Log.e("showPresentations", presentations.toString());
         if (layoutManagerState != null) {
@@ -241,14 +238,24 @@ public class FeedFragment extends Fragment implements FeedView,
     }
 
     @Override
+    public void launchLoading(List<PresentationEntity> presentationsToLoad) {
+        if (getActivity() instanceof Navigation) {
+            List<Integer> presentationIds = Stream.of(presentationsToLoad)
+                    .map(PresentationEntity::getId)
+                    .toList();
+            ((Navigation) getActivity()).showLoading(new ArrayList<>(presentationIds));
+        }
+    }
+
+    @Override
     public void updatePresentation(List<PresentationEntity> presentationEntities, int position) {
-        adapter.setData(presentationEntities);
+        setAdapterData(presentationEntities);
         adapter.notifyItemChanged(position);
     }
 
     @Override
     public void refreshPresentation(List<PresentationEntity> presentationEntities, int position) {
-//        adapter.setData(presentationEntities);
+//        setAdapterData(presentationEntities);
         adapter.notifyItemChanged(position);
     }
 
@@ -272,59 +279,16 @@ public class FeedFragment extends Fragment implements FeedView,
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        // Bind to LocalService
-        Intent intent = new Intent(getActivity(), ContentService.class);
-        if (getActivity() != null) {
-            try {
-                getActivity().startService(intent);
-                getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         feedPresenter.destroy();
-        if (feedPresenter.isBound() && getActivity() != null) {
-            getActivity().unbindService(serviceConnection);
-            feedPresenter.unbindContentService(serviceConnection);
-            feedPresenter.setBound(false);
-        }
     }
 
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ContentService.LocalBinder binder = (ContentService.LocalBinder) service;
-            feedPresenter.setBound(true);
-            feedPresenter.bindContentService(binder.getService());
-//            if (savedInstanceState != null) {
-//                if (savedInstanceState.getBoolean(PRESENTATIONS_LOADING)) {
-//                    feedPresenter.getPresentations(true);
-//                } else {
-//                    feedPresenter.getPresentations(false);
-//                }
-//            } else {
-//                feedPresenter.getPresentations(true);
-//                isPresentationsLoading = true;
-//            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            feedPresenter.setBound(false);
-        }
-    };
+    private void setAdapterData(List<PresentationEntity> presentationEntities) {
+        List<PresentationEntity> data = Stream.of(presentationEntities)
+                .filter(PresentationEntity::isVisible)
+                .toList();
+        adapter.setData(data);
+    }
 }
 
