@@ -8,15 +8,22 @@ import ru.breffi.smartlibrary.host.HostActivity
 
 class SplashActivity : Activity() {
 
+    val handler = Handler()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Handler().postDelayed(
+        handler.postDelayed(
             {
                 startActivity(Intent(this, HostActivity::class.java))
                 finish()
             },
             2000
         )
+    }
+
+    override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
+        super.onDestroy()
     }
 }
