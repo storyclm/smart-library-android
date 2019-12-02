@@ -13,11 +13,16 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name="ru.breffi.clm.ui.library.host.HostActivity"
+                android:name=".host.HostActivity"
                 android:screenOrientation="landscape">
+        </activity>
+
+        <activity
+                android:name=".splash.SplashActivity"
+                android:screenOrientation="landscape"
+                android:theme="@style/SplashActivityStyle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
